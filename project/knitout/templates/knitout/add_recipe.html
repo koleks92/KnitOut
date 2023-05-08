@@ -1,0 +1,13 @@
+{% extends "knitout/layout.html" %}
+
+{% block body %}
+<h1>Add New Recipe</h1>
+<form method="POST">
+    {% csrf_token %}
+    <div id="add_name">{{ add_form.name }}</div>
+    <div id="add_category">{{ add_form.category }}</div>
+    <div id="add_recipe">{{ add_form.description }}</div>
+    <div id="add_difficulty">{{ add_form.difficulty }}</div>
+    <div id="add_button_div"><input type="submit" id="add_button"></div>
+</form>
+{% endblock %}
