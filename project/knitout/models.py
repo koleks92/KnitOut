@@ -31,7 +31,8 @@ class Recipe(models.Model):
 
     name = models.CharField(max_length = 48)
     category = models.CharField(max_length=64, choices=CATEGORIES)
-    description = models.CharField(max_length=6400)
+    num_steps = models.IntegerField(default = 0)
+    jarn_amount = models.FloatField(default = 0)
     date = models.DateTimeField(auto_now_add=True)
     difficulty = models.CharField(max_length=64, choices=DIFFICULTY)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")  
@@ -39,5 +40,18 @@ class Recipe(models.Model):
 
     def __str__(self):
         return str(self.id) + '_' + str(self.name)
+    
+class Step(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    step = models.IntegerField()
+    description = models.TextField()
+
+    class Meta:
+        unique_together = ['recipe', 'step']
+
+    def __str__(self):
+        return str(self.recipe) + '_step_' + str(self.step)
+    
+
                      
 
