@@ -93,3 +93,59 @@ else if (currentRoute.startsWith('/add_recipe/'))
         
     })  
 }
+else if (currentRoute.endsWith('steps'))
+{
+    document.addEventListener('DOMContentLoaded', function() 
+    {
+        // Get all form steps and buttons
+        const formSteps = document.querySelectorAll(".recipe_step");
+        const prevButton = document.getElementById("recipe_step_prev");
+        const nextButton = document.getElementById("recipe_step_next");
+
+        // Set initial step and disable previous button and send button
+        let currentStep = 0;
+        prevButton.disabled = true;
+
+          // Hide other views and show first
+          formSteps[currentStep].style.display = "block";
+          for (let i=1; i < formSteps.length; i++)
+          {
+              formSteps[i].style.display = "none";
+          }
+
+                  // Add click event listeners to buttons
+        prevButton.addEventListener("click", () => {
+            // Hide current step
+            formSteps[currentStep].style.display = "none";
+            // Decrement step and show previous step
+            currentStep--;
+            formSteps[currentStep].style.display = "block";
+            // Disable previous button if on first step
+            if (currentStep === 0) {
+                prevButton.disabled = true;
+            }
+            // Enable next button if previously disabled
+            if (nextButton.disabled) {
+                nextButton.disabled = false;
+            }
+        });
+
+        nextButton.addEventListener("click", () => {
+            // Hide current step
+            formSteps[currentStep].style.display = "none";
+            // Increment step and show next step
+            currentStep++;
+            formSteps[currentStep].style.display = "block";
+            // Disable next button if on last step
+            if (currentStep === formSteps.length - 1) {
+                nextButton.disabled = true;
+            }
+            // Enable previous button if previously disabled
+            if (prevButton.disabled) {
+                prevButton.disabled = false;
+            }
+            
+        });       
+
+    });
+}

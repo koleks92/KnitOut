@@ -117,36 +117,61 @@ def add_recipe(request):
         
 @login_required
 def add_steps(request, id):
-    # Get recipe and number of steps to add
-    recipe = get_object_or_404(Recipe, id = id)
-    num_steps = recipe.num_steps
+    try:
+        # Get recipe and number of steps to add
+        recipe = get_object_or_404(Recipe, id = id)
+        num_steps = recipe.num_steps
 
-    # Create formset_factory for Steps_Form
-    Steps_FormsSet = forms.formset_factory(Steps_Form, extra = num_steps)
+        # Create formset_factory for Steps_Form
+        Steps_FormsSet = forms.formset_factory(Steps_Form, extra = num_steps)
 
-    if request.method == "POST":
-        form_steps = Steps_FormsSet(request.POST)
-        if form_steps.is_valid():
-            # Get steps with descriptions
-            for step, description in enumerate(form_steps, start=0):
-                # Get clean description
-                description = description.cleaned_data['description']
-                step_recipe = Step(recipe = recipe,
-                            step = step,
-                            description = description)
-                step_recipe.save()
-            
-            return render(request, "knitout/index.html", {
-                "message": "Recipie added successfully"
+        if request.method == "POST":
+            form_steps = Steps_FormsSet(request.POST)
+            if form_steps.is_valid():
+                # Get steps with descriptions
+                for step, description in enumerate(form_steps, start=0):
+                    # Get clean description
+                    description = description.cleaned_data['description']
+                    step_recipe = Step(recipe = recipe,
+                                step = step,
+                                description = description)
+                    step_recipe.save()
+                
+            return redirect('recipe_view', id = id)
+
+        else:
+            # Create FormsSet 
+            form_steps = Steps_FormsSet()
+
+            return render(request, "knitout/add_steps.html",{
+                "form_steps": form_steps
             })
-
-    else:
-        # Create FormsSet 
-        form_steps = Steps_FormsSet()
-
-        return render(request, "knitout/add_steps.html",{
-            "form_steps": form_steps
+    except:
+        return render(request, "knitout/error.html",{
+            "message": "Something went wrong! Please try again."
         })
     
+    
+def recipe_view(request, id):
+    try:
+        recipe = get_object_or_404(Recipe, id = id)
+        
+        return render(request, "knitout/recipe.html", {
+            "recipe": recipe
+        })
+    except:
+        return render(request, "knitout/error.html", {
+            "message": "Cannot find given recipie. Please try again."
+        })
+    
+def recipe_view_steps(request, id):
+    recipe = get_object_or_404(Recipe, id = id)
+    steps = Step.objects.filter(recipe = recipe)
+    
+    return render(request, "knitout/recipe_steps.html",{
+        "steps": steps
+    })
+    
+
 
 

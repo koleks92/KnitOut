@@ -1,0 +1,18 @@
+{% extends "knitout/layout.html" %}
+
+{% block body %}
+<h1>Steps</h1>
+<div id="recipie_steps_div">
+    {% for step in steps %}
+    <div class="recipe_step" id="recipe_step_{{ forloop.counter }}">
+        <div class="recipie_step_counter">{{ forloop.counter }}</div>
+        <div class="recipie_step_text">{{ step.description }}</div>
+    </div>
+    {% endfor %}
+    <div id="add_step_buttons">
+        <button id="recipe_step_prev" disabled>Previous</button>
+        <button id="recipe_step_next">Next</button>
+    </div>
+
+</div>
+{% endblock %}

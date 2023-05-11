@@ -1,0 +1,18 @@
+{% extends "knitout/layout.html" %}
+
+{% block body %}
+<h1>Recipe</h1>
+<div id="recipie_div">
+    <div id="recipe_favorite">Favorite Yes/No</div>
+    <div id="recipe_name">{{ recipe.name }}</div>
+    <div id="recipe_category">{{ recipe.get_category_display }}</div>
+    <div id="recipe_num_steps">{{ recipe.num_steps }}</div>
+    <div id="recipe_date">{{ recipe.date }}</div>
+    <div id="recipe_difficulty">{{ recipe.get_difficulty_display }}</div>
+    <div id="recipe_user">{{ recipe.user }}</div>
+    <div id="recipe_rating"> Rating: 0 / 10</div>
+
+    <div id="steps_div"><a href={% url 'recipe_view_steps' recipe.id %}>Go to steps</a> </div>
+
+</div>
+{% endblock %}
