@@ -17,12 +17,12 @@ class Recipe_Form(forms.Form):
 
     name = forms.CharField(label="Name", widget=forms.TextInput(attrs={'placeholder': 'Enter name of the recipe'}))
     category = forms.ChoiceField(label="Category", widget=forms.Select, choices=CATEGORIES, initial=False)
-    num_steps = forms.IntegerField(label="Number of Steps", widget=forms.NumberInput(attrs={'placeholder': 'Enter the number of steps'}))
-    jarn_amount = forms.FloatField(label="Jarn Amount", widget=forms.NumberInput(attrs={'placeholder': 'Enter the amount of jarn needed'}))
+    num_steps = forms.IntegerField(label="Number of Steps", min_value=2, widget=forms.NumberInput(attrs={'placeholder': 'Enter the number of steps'}))
+    jarn_amount = forms.FloatField(label="Jarn Amount", min_value=0.1, widget=forms.NumberInput(attrs={'placeholder': 'Enter the amount of jarn needed'}))
     difficulty = forms.ChoiceField(label="Difficulty", widget=forms.Select, choices=DIFFICULTY, initial=False)
 
 class Steps_Form(forms.Form):
-    description = forms.CharField(label = "", widget=forms.Textarea(attrs={'placeholder': 'Enter step description'}))
+    description = forms.CharField(label = "", required=True, widget=forms.Textarea(attrs={'placeholder': 'Enter step description'}))
 
 ''' VIEWS '''
 
@@ -128,13 +128,13 @@ def add_steps(request, id):
         form_steps = Steps_FormsSet(request.POST)
         if form_steps.is_valid():
             # Get steps with descriptions
-            for step, description in enumerate(form_steps, start=1):
+            for step, description in enumerate(form_steps, start=0):
                 # Get clean description
                 description = description.cleaned_data['description']
-                step = Step(recipe = recipe,
+                step_recipe = Step(recipe = recipe,
                             step = step,
                             description = description)
-                step.save()
+                step_recipe.save()
             
             return render(request, "knitout/index.html", {
                 "message": "Recipie added successfully"
