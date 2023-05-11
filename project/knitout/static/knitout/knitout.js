@@ -1,8 +1,11 @@
 const currentRoute = window.location.pathname;
 
-if (currentRoute === "/")
+if (currentRoute == "/")
 {
-    console.log("index");
+    document.addEventListener('DOMContentLoaded', function() 
+    {
+
+    });
 }
 else if (currentRoute.startsWith('/add_recipe/'))
 {
@@ -106,14 +109,14 @@ else if (currentRoute.endsWith('steps'))
         let currentStep = 0;
         prevButton.disabled = true;
 
-          // Hide other views and show first
-          formSteps[currentStep].style.display = "block";
-          for (let i=1; i < formSteps.length; i++)
-          {
-              formSteps[i].style.display = "none";
-          }
+        // Hide other views and show first
+        formSteps[currentStep].style.display = "block";
+        for (let i=1; i < formSteps.length; i++)
+        {
+            formSteps[i].style.display = "none";
+        }
 
-                  // Add click event listeners to buttons
+        // Add click event listeners to buttons
         prevButton.addEventListener("click", () => {
             // Hide current step
             formSteps[currentStep].style.display = "none";
@@ -148,4 +151,111 @@ else if (currentRoute.endsWith('steps'))
         });       
 
     });
+}
+else if (currentRoute.startsWith("/recipe/"))
+{
+    document.addEventListener('DOMContentLoaded', function() 
+    {
+        // Get recipe id
+        const id = currentRoute.replace("/recipe/", "");
+
+        // Get thumbs_up and thumbs_down
+        const thumbs_up = document.querySelector(".fa-thumbs-up");
+        const thumbs_down = document.querySelector(".fa-thumbs-down");
+
+        get_likes(thumbs_up, thumbs_down, id);
+
+        // Check if loggedin
+        fetch(`/likes/${id}`, {
+            method: "GET"
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.logged)
+            {
+                // Get API for Likes
+                thumbs_up.addEventListener('click', function() {
+                    fetch(`/likes/${id}`, {
+                        method: "PUT"
+                    })
+                    .then(response => response.json())
+                    .then(data => { 
+                        if (data.message == "Liked")
+                        {
+                            thumbs_up.classList.replace("fa-regular", "fa-solid");
+                            thumbs_down.classList.replace("fa-solid", "fa-regular");
+                        }
+                        else if (data.message == "Unliked")
+                        {
+                            thumbs_up.classList.replace("fa-solid", "fa-regular");
+                        }
+                        get_likes(thumbs_up, thumbs_down, id);
+                    })
+                })
+
+                // Get API for Dislikes
+                thumbs_down.addEventListener('click', function() {
+                    fetch(`/dislikes/${id}`, {
+                        method: "PUT"
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message == "Disliked")
+                        {
+                            thumbs_down.classList.replace("fa-regular", "fa-solid");
+                            thumbs_up.classList.replace("fa-solid", "fa-regular");
+                        }
+                        else if (data.message == "Undisliked")
+                        {
+                            thumbs_down.classList.replace("fa-solid", "fa-regular");
+                        }
+                        get_likes(thumbs_up, thumbs_down, id);
+                    })
+                })
+            }
+        });
+        
+    })
+}
+
+function get_likes(thumbs_up, thumbs_down, id)
+{
+    // Get API for GET
+    fetch(`/likes/${id}`, {
+        method: "GET"
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Change progress and progress_bar artibutes
+        const progress = document.querySelector(".progress");
+        progress.ariaValueNow = data.procent_likes;
+        const progress_bar = document.querySelector(".progress-bar");
+        progress_bar.style = `width: ${data.procent_likes}%`;
+        
+        if (data.logged)
+        {
+            thumbs_animation(thumbs_up);
+            thumbs_animation(thumbs_down);
+            if (data.liked)
+            {
+                thumbs_up.classList.replace("fa-regular", "fa-solid");
+            }
+            else if (data.disliked)
+            {
+                thumbs_down.classList.replace("fa-regular", "fa-solid");
+            }
+        }
+    })
+}
+
+function thumbs_animation(thumb)
+{
+    // Like Heart animation 
+    thumb.addEventListener("mouseover", () => {
+        thumb.classList.add("fa-flip");
+    });
+
+    thumb.addEventListener("mouseout", () => {
+        thumb.classList.remove("fa-flip");
+      });
 }

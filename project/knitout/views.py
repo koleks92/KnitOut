@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django import forms
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+
 
  
 from .models import User, Recipe, Step
@@ -165,12 +167,95 @@ def recipe_view(request, id):
         })
     
 def recipe_view_steps(request, id):
+    # Get steps
     recipe = get_object_or_404(Recipe, id = id)
     steps = Step.objects.filter(recipe = recipe)
     
     return render(request, "knitout/recipe_steps.html",{
         "steps": steps
     })
+
+
+
+# API likes/dislikes
+@csrf_exempt
+def likes(request, id):
+    try:
+        recipe = get_object_or_404(Recipe, id = id)
+
+        if request.method == "GET":
+            # Get number of likes and dislikes
+            num_likes = len(recipe.likes.all())
+            num_dislikes = len(recipe.dislikes.all())
+
+            # Calculate procentege of likes
+            if num_likes == 0 and num_dislikes == 0:
+                procent_likes = 50
+            elif num_likes == 0:
+                procent_likes = 0
+            elif num_dislikes == 0:
+                procent_likes = 100
+            else:
+                procent_likes = num_likes / (num_likes + num_dislikes) * 100
+
+            liked = False
+            disliked = False
+            logged = False
+
+            # Check if logged in and if liked/disliked already
+            if request.user.is_authenticated:
+                logged = True
+                if recipe.likes.filter(username = request.user).exists():
+                    liked = True
+                if recipe.dislikes.filter(username = request.user).exists():
+                    disliked = True
+            
+            # Create response data and send vis JsonResponse
+            response_data = {"procent_likes": procent_likes,
+                             "liked": liked,
+                             "disliked": disliked,
+                             "logged": logged}
+            
+            return JsonResponse(response_data)
+
+
+        if request.method == "PUT":
+            # Check if logged in and if liked/disliked already
+            if request.user.is_authenticated:
+                # If liked => Unlike
+                if recipe.likes.filter(username = request.user).exists():
+                    recipe.likes.remove(request.user) 
+                    return JsonResponse ({"message": "Unliked"})                      
+                else:
+                    #  Like and check if Disliked
+                    recipe.likes.add(request.user)
+                    if recipe.dislikes.filter(username = request.user).exists():
+                        recipe.dislikes.remove(request.user)
+                    return JsonResponse ({"message": "Liked"})
+                                               
+
+    except:
+        return render(request, "knitout/error.html", {
+            "message": "Something went wrong! Please try again."
+        })
+
+@csrf_exempt
+def dislikes(request, id):
+    recipe = get_object_or_404(Recipe, id = id)
+
+    if request.method == "PUT":
+        # Check if logged in and if liked/disliked already
+        if request.user.is_authenticated:
+            # If Disliked => Undisliked
+            if recipe.dislikes.filter(username = request.user).exists():
+                recipe.dislikes.remove(request.user) 
+                return JsonResponse ({"message": "Undisliked"})                      
+            else:
+                #  Disike and check if Liked
+                recipe.dislikes.add(request.user)
+                if recipe.likes.filter(username = request.user).exists():
+                    recipe.likes.remove(request.user)
+                return JsonResponse ({"message": "Disliked"})
     
 
 

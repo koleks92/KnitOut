@@ -23,7 +23,7 @@ class Recipe(models.Model):
 
     DIFFICULTY = [
         ('', 'Choose level'),
-        ('begginer', 'Begginer'),
+        ('beginner', 'Beginner'),
         ('intermediate', 'Intermediate'),
         ('experienced', 'Experienced'),
         ('expert', 'Expert/Grandma')
@@ -37,6 +37,8 @@ class Recipe(models.Model):
     difficulty = models.CharField(max_length=64, choices=DIFFICULTY)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")  
     favorite = models.ManyToManyField(User, blank=True, related_name="favorites")
+    likes = models.ManyToManyField(User, blank=True, related_name="users_likes")
+    dislikes = models.ManyToManyField(User, blank=True, related_name="user_dislikes")
 
     def __str__(self):
         return str(self.id) + '_' + str(self.name)
