@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 
  
-from .models import User, Recipe, Step
+from .models import User, Recipe, Step, Follow
 
 ''' FORMS '''
 class Recipe_Form(forms.Form):
@@ -222,7 +222,7 @@ def profile_view(request, username):
 
 
 
-# API likes/dislikes, favorites
+'''API likes/dislikes, favorites, follow'''
 @csrf_exempt
 def likes(request, id):
     try:
@@ -308,7 +308,7 @@ def dislikes(request, id):
         })
     
 
-@csrf_exempt               
+@csrf_exempt     
 def favorites(request, id):
     recipe = get_object_or_404(Recipe, id = id)
 
@@ -341,4 +341,38 @@ def favorites(request, id):
             else:
                 recipe.favorites.add(request.user)
                 return JsonResponse({"message": "Favorited"})
+            
+@csrf_exempt
+def follow(request, username):
+    # Check if logged in
+    if request.user.is_authenticated == False:
+        message = "Guest"
+        return JsonResponse({"message": message})
+    
+    # User to follow
+    user = get_object_or_404(User, username = username)  
+
+    if request.method == "GET":
+        # Check if Followed/Unfollowed
+        if Follow.objects.filter(user=request.user, followed_users=user).exists():
+            message = "Followed"
+        else:
+            message = "Unfollowed"
+
+        return JsonResponse({"message": message})
+
+    
+    if request.method == "PUT":
+        # If followed then unfollow
+        if Follow.objects.filter(user=request.user, followed_users=user).exists():
+            follow = Follow.objects.get(user=request.user)
+            follow.followed_users.remove(user)
+            message = "Unfollowed"
+        # If unfollowed then follow
+        else:
+            follow, created = Follow.objects.get_or_create(user=request.user)
+            follow.followed_users.add(user)
+            message = "Followed"
+
+        return JsonResponse({"message": message})    
             

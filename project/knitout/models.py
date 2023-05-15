@@ -55,6 +55,14 @@ class Step(models.Model):
     def __str__(self):
         return str(self.recipe) + '_step_' + str(self.step)
     
+class Follow(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)                                    
+    followed_users = models.ManyToManyField(User, blank=True, related_name="followed_users")
+
+    def __str__(self):
+        return str(self.user)
+
+    
 
                      
 

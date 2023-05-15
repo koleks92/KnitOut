@@ -259,10 +259,54 @@ else if (currentRoute.startsWith("/recipe/"))
         });     
     })
 }
+else if (currentRoute.startsWith("/profile/"))
+{
+    // Get username
+    const username = currentRoute.replace("/profile/", "");
+
+    // Get if followed or not
+    fetch(`/follow/${username}`, {
+        method: "GET"
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message != "Guest")
+        {
+            // Get button and change name if Followed/Unfollowed
+            let button = document.querySelector("#profile_follow_button");
+
+            if (data.message =="Followed")
+            {
+                button.innerHTML = "Unfollow";
+            }
+            else if (data.message == "Unfollowed")
+            {
+                button.innerHTML = "Follow";
+            }
+
+            button.addEventListener('click', function() {
+                fetch (`/follow/${username}`, {
+                    method: "PUT"
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message =="Followed")
+                    {
+                        button.innerHTML = "Unfollow";
+                    }
+                    else if (data.message == "Unfollowed")
+                    {
+                        button.innerHTML = "Follow";
+                    }
+                });
+            })
+        }
+    })
+}
 
 function get_likes(thumbs_up, thumbs_down, id)
 {
-    // Get API for GET
+    // API for likes
     fetch(`/likes/${id}`, {
         method: "GET"
     })
