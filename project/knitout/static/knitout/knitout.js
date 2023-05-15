@@ -165,12 +165,13 @@ else if (currentRoute.startsWith("/recipe/"))
 
         get_likes(thumbs_up, thumbs_down, id);
 
-        // Check if loggedin
+        // LIKES
         fetch(`/likes/${id}`, {
             method: "GET"
         })
         .then(response => response.json())
         .then(data => {
+            // Check if logged
             if (data.logged)
             {
                 // Get API for Likes
@@ -214,7 +215,48 @@ else if (currentRoute.startsWith("/recipe/"))
                 })
             }
         });
-        
+
+        // FAVORITES
+        fetch(`/favorites/${id}`, {
+            method: "GET"
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Check if logged
+            if (data.logged)
+            {
+                // Get button
+                const button = document.querySelector("#recipe_favorite_button");
+                // If already in favorites
+                if (data.favorited)
+                {
+                    button.innerHTML = "Remove from Favorites";
+                }
+                else
+                {
+                    button.innerHTML = "Add to Favorites";
+                }
+
+
+                // Get API for Dislikes
+                button.addEventListener('click', function() {
+                    fetch(`/favorites/${id}`, {
+                        method: "PUT"
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message == "Favorited")
+                        {
+                            button.innerHTML = "Remove from Favorites";
+                        }
+                        else if (data.message == "Unfavorited")
+                        {
+                            button.innerHTML = "Add to Favorites";
+                        }
+                    })
+                })
+            }
+        });     
     })
 }
 
@@ -252,10 +294,10 @@ function thumbs_animation(thumb)
 {
     // Like Heart animation 
     thumb.addEventListener("mouseover", () => {
-        thumb.classList.add("fa-flip");
+        thumb.classList.add("fa-bounce");
     });
 
     thumb.addEventListener("mouseout", () => {
-        thumb.classList.remove("fa-flip");
+        thumb.classList.remove("fa-bounce");
       });
 }

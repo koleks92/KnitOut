@@ -232,31 +232,67 @@ def likes(request, id):
                     if recipe.dislikes.filter(username = request.user).exists():
                         recipe.dislikes.remove(request.user)
                     return JsonResponse ({"message": "Liked"})
-                                               
-
+    
     except:
         return render(request, "knitout/error.html", {
             "message": "Something went wrong! Please try again."
         })
+                                               
 
 @csrf_exempt
 def dislikes(request, id):
-    recipe = get_object_or_404(Recipe, id = id)
+    try:
+        recipe = get_object_or_404(Recipe, id = id)
 
-    if request.method == "PUT":
-        # Check if logged in and if liked/disliked already
-        if request.user.is_authenticated:
-            # If Disliked => Undisliked
-            if recipe.dislikes.filter(username = request.user).exists():
-                recipe.dislikes.remove(request.user) 
-                return JsonResponse ({"message": "Undisliked"})                      
-            else:
-                #  Disike and check if Liked
-                recipe.dislikes.add(request.user)
-                if recipe.likes.filter(username = request.user).exists():
-                    recipe.likes.remove(request.user)
-                return JsonResponse ({"message": "Disliked"})
+        if request.method == "PUT":
+            # Check if logged in and if liked/disliked already
+            if request.user.is_authenticated:
+                # If Disliked => Undisliked
+                if recipe.dislikes.filter(username = request.user).exists():
+                    recipe.dislikes.remove(request.user) 
+                    return JsonResponse ({"message": "Undisliked"})                      
+                else:
+                    #  Disike and check if Liked
+                    recipe.dislikes.add(request.user)
+                    if recipe.likes.filter(username = request.user).exists():
+                        recipe.likes.remove(request.user)
+                    return JsonResponse ({"message": "Disliked"})
+    except:
+        return render(request, "knitout/error.html", {
+            "message": "Something went wrong! Please try again."
+        })
     
 
+@csrf_exempt               
+def favorites(request, id):
+    recipe = get_object_or_404(Recipe, id = id)
+
+    if request.method == "GET":
+        # Check if logged and favorited
+        logged = False
+        favorited = False
+        if request.user.is_authenticated:
+            logged = True
+            if recipe.favorites.filter(username = request.user).exists():
+                favorited = True
+
+        # Create a response_data and send via JsonResponse
+        response_data = {
+            "logged": logged,
+            "favorited": favorited
+        }
+
+        return JsonResponse(response_data)
 
 
+    if request.method == "PUT":
+        # Check if logged in and if already in favroites
+        if request.user.is_authenticated:
+            # If in favorites then remove
+            if recipe.favorites.filter(username = request.user):
+                recipe.favorites.remove(request.user)
+                return JsonResponse({"message": "Unfavorited"})
+            # If not in favorites than add
+            else:
+                recipe.favorites.add(request.user)
+                return JsonResponse({"message": "Favorited"})
