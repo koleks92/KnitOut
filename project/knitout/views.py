@@ -175,9 +175,54 @@ def recipe_view_steps(request, id):
         "steps": steps
     })
 
+def profile_view(request, username):
+    if request.method == "PUT":
+        pass
+
+    if request.method == "GET":
+        user = get_object_or_404(User, username = username)
+
+        # Get name
+        name = user.username
+
+        # Get followers TODO
+        followers = 0
+
+        # Get number of recipies added by user
+        if Recipe.objects.filter(user = user):
+            num_recipes = len(Recipe.objects.filter(user = user))
+        else:
+            num_recipes = 0
+
+        # Get date user joined 
+        joined = user.date_joined
+        
+        # Get recipes
+        recipes = Recipe.objects.filter(user = user)
+
+        # Check if profile belonges to logged in user
+        owner = False
+        if user == request.user:
+            owner = True
+
+        # Create profile
+        profile = {
+            "name": name,
+            "followers": followers,
+            "num_recipes": num_recipes,
+            "joined": joined,
+            "recipes": recipes,
+            "owner": owner
+        }
+
+        return render (request, "knitout/profile.html", {
+            "profile": profile
+        })
 
 
-# API likes/dislikes
+
+
+# API likes/dislikes, favorites
 @csrf_exempt
 def likes(request, id):
     try:
@@ -296,3 +341,4 @@ def favorites(request, id):
             else:
                 recipe.favorites.add(request.user)
                 return JsonResponse({"message": "Favorited"})
+            

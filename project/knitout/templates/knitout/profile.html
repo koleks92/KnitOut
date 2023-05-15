@@ -1,0 +1,22 @@
+{% extends "knitout/layout.html" %}
+
+{% block body %}
+<h1>{{ profile.name }}</h1>
+<div id="profile_div">
+    {% if user.is_authenticated and profile.owner == False %}
+    <div id="profile_follow"><button id="profile_follow_button">Follow</button></div>
+    {% endif %}
+    <div id="profile_name">{{ profile.name }}</div>
+    <div id="profile_followers">{{ profile.followers }}</div>
+    <div id="profile_num_recipes">{{ profile.num_recipes }}</div>
+    <div id="profile_joined">{{ profile.joined }}</div>
+    <div id="profile_recipes">
+        {% if profile.recipes %}
+        {% else %}
+            {{ profile.name}} didn't add any recipes yet !
+        {% endif %}
+    </div>
+
+
+</div>
+{% endblock %}
