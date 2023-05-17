@@ -2,7 +2,46 @@
 
 {% block body %}
 <h1>Index</h1>
-{% if message %}    
-    {{ message }}
-{% endif %}
+<div id="index_div">
+    {% if user.is_authenticated %}
+    <div id="recently_added_follow">
+        Recently added recipes from followed users
+        {% for recipe in recipes_follow %}
+        <div class="recipe_preview">
+            <div class="recipe_preview_id">{{ recipe.id }}</div>
+            <div class="recipe_preview_name">{{ recipe.name }}</div>
+            <div class="recipe_preview_category">{{ recipe.get_category_display }}</div>
+            <div class="recipe_preview_difficulty">{{ recipe.get_difficulty_display }}</div>
+            <div class="recipe_preview_bar">
+                <div id="recipe_down"><i class="fa-regular fa-thumbs-down"></i></div>
+                <div id="recipe_bar"><div class="progress w-25" role="progressbar" aria-label="Good/Bad"
+                aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar" style="width: 50%">
+                </div></div>
+                <div id="recipe_up"><i class="fa-regular fa-thumbs-up"></i></div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div id="recently_added_all">
+        Recently added recipes
+        {% for recipe in recipes_all %}
+        <div class="recipe_preview">
+            <div class="recipe_preview_id">{{ recipe.id }}</div>
+            <div class="recipe_preview_name">{{ recipe.name }}</div>
+            <div class="recipe_preview_category">{{ recipe.get_category_display }}</div>
+            <div class="recipe_preview_difficulty">{{ recipe.get_difficulty_display }}</div>
+            <div class="recipe_preview_bar">
+                <div id="recipe_down"><i class="fa-regular fa-thumbs-down"></i></div>
+                <div id="recipe_bar"><div class="progress w-25" role="progressbar" aria-label="Good/Bad"
+                aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar" style="width: 50%">
+                </div></div>
+                <div id="recipe_up"><i class="fa-regular fa-thumbs-up"></i></div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

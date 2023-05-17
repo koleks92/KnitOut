@@ -4,7 +4,12 @@ if (currentRoute == "/")
 {
     document.addEventListener('DOMContentLoaded', function() 
     {
+        const recipe_divs = document.querySelectorAll(".recipe_preview");
+        recipe_divs.forEach((recipe) => {
+            const id = recipe.querySelector(".recipe_preview_id").innerHTML;
 
+            get_likes(recipe, id);  
+        });
     });
 }
 else if (currentRoute.startsWith('/add_recipe/'))
@@ -158,12 +163,15 @@ else if (currentRoute.startsWith("/recipe/"))
     {
         // Get recipe id
         const id = currentRoute.replace("/recipe/", "");
+        
+        // Get recipe div
+        const recipe = document.querySelector("#recipe_view_div");
+   
 
         // Get thumbs_up and thumbs_down
         const thumbs_up = document.querySelector(".fa-thumbs-up");
         const thumbs_down = document.querySelector(".fa-thumbs-down");
-
-        get_likes(thumbs_up, thumbs_down, id);
+        get_likes(recipe, id);
 
         // LIKES
         fetch(`/likes/${id}`, {
@@ -174,6 +182,9 @@ else if (currentRoute.startsWith("/recipe/"))
             // Check if logged
             if (data.logged)
             {
+                thumbs_animation(thumbs_up);
+                thumbs_animation(thumbs_down);
+
                 // Get API for Likes
                 thumbs_up.addEventListener('click', function() {
                     fetch(`/likes/${id}`, {
@@ -190,7 +201,7 @@ else if (currentRoute.startsWith("/recipe/"))
                         {
                             thumbs_up.classList.replace("fa-solid", "fa-regular");
                         }
-                        get_likes(thumbs_up, thumbs_down, id);
+                        get_likes(recipe, id);
                     })
                 })
 
@@ -210,7 +221,7 @@ else if (currentRoute.startsWith("/recipe/"))
                         {
                             thumbs_down.classList.replace("fa-solid", "fa-regular");
                         }
-                        get_likes(thumbs_up, thumbs_down, id);
+                        get_likes(recipe, id);
                     })
                 })
             }
@@ -304,7 +315,7 @@ else if (currentRoute.startsWith("/profile/"))
     })
 }
 
-function get_likes(thumbs_up, thumbs_down, id)
+function get_likes(recipe, id)
 {
     // API for likes
     fetch(`/likes/${id}`, {
@@ -313,15 +324,16 @@ function get_likes(thumbs_up, thumbs_down, id)
     .then(response => response.json())
     .then(data => {
         // Change progress and progress_bar artibutes
-        const progress = document.querySelector(".progress");
+        const progress = recipe.querySelector(".progress");
         progress.ariaValueNow = data.procent_likes;
-        const progress_bar = document.querySelector(".progress-bar");
+        const progress_bar = recipe.querySelector(".progress-bar");
         progress_bar.style = `width: ${data.procent_likes}%`;
         
         if (data.logged)
         {
-            thumbs_animation(thumbs_up);
-            thumbs_animation(thumbs_down);
+            const thumbs_up = recipe.querySelector(".fa-thumbs-up");
+            const thumbs_down = recipe.querySelector(".fa-thumbs-down");
+
             if (data.liked)
             {
                 thumbs_up.classList.replace("fa-regular", "fa-solid");

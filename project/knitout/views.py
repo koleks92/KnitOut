@@ -7,7 +7,6 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
-
  
 from .models import User, Recipe, Step, Follow
 
@@ -29,7 +28,20 @@ class Steps_Form(forms.Form):
 ''' VIEWS '''
 
 def index(request):
-    return render(request, "knitout/index.html")
+    recipes_follow = False
+
+    # Get 2 recent favorites
+    if request.user.is_authenticated:
+        recipes_follow = Recipe.objects.filter(favorites = request.user).order_by('-date')[:2]
+         
+    # Get 10 recent recipes
+    recipes_all = Recipe.objects.order_by('-date')[:10]
+
+
+    return render(request, "knitout/index.html", {
+        "recipes_follow": recipes_follow,
+        "recipes_all": recipes_all
+    })
 
 
 def login_view(request):
@@ -176,8 +188,6 @@ def recipe_view_steps(request, id):
     })
 
 def profile_view(request, username):
-    if request.method == "PUT":
-        pass
 
     if request.method == "GET":
         user = get_object_or_404(User, username = username)
@@ -228,6 +238,7 @@ def likes(request, id):
     try:
         recipe = get_object_or_404(Recipe, id = id)
 
+        # If GET the get likes and dislikes
         if request.method == "GET":
             # Get number of likes and dislikes
             num_likes = len(recipe.likes.all())

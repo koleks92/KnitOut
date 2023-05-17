@@ -2,26 +2,27 @@
 
 {% block body %}
 <h1>Recipe</h1>
-<div id="recipie_div">
-    {% if user.is_authenticated %}
-    <div id="recipe_favorite"><button id="recipe_favorite_button">Add to Favorites</button></div>
-    {% endif %}
-    <div id="recipe_name">{{ recipe.name }}</div>
-    <div id="recipe_category">{{ recipe.get_category_display }}</div>
-    <div id="recipe_num_steps">{{ recipe.num_steps }}</div>
-    <div id="recipe_date">{{ recipe.date }}</div>
-    <div id="recipe_difficulty">{{ recipe.get_difficulty_display }}</div>
-    <div id="recipe_user">{{ recipe.user }}</div>
-    <div id="recipe_likes">
-        <div id="recipe_down"><i class="fa-regular fa-thumbs-down"></i></div>
-        <div id="recipe_bar"><div class="progress w-25" role="progressbar" aria-label="Good/Bad"
-            aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-bar" style="width: 50%">
-            </div></div></div>
-        <div id="recipe_up"><i class="fa-regular fa-thumbs-up"></i></div>
+<div id="recipe_div">
+    <div id="recipe_view_div">
+        {% if user.is_authenticated %}
+        <div id="recipe_favorite"><button id="recipe_favorite_button">Add to Favorites</button></div>
+        {% endif %}
+        <div id="recipe_name">{{ recipe.name }}</div>
+        <div id="recipe_category">{{ recipe.get_category_display }}</div>
+        <div id="recipe_num_steps">{{ recipe.num_steps }}</div>
+        <div id="recipe_date">{{ recipe.date }}</div>
+        <div id="recipe_difficulty">{{ recipe.get_difficulty_display }}</div>
+        <div id="recipe_user">{{ recipe.user }}</div>
+        <div id="recipe_likes">
+            <div id="recipe_down"><i class="fa-regular fa-thumbs-down"></i></div>
+            <div id="recipe_bar"><div class="progress w-25" role="progressbar" aria-label="Good/Bad"
+                aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar" style="width: 50%">
+                </div></div></div>
+            <div id="recipe_up"><i class="fa-regular fa-thumbs-up"></i></div>
+        </div>
+
+        <div id="steps_div"><a href={% url 'recipe_view_steps' recipe.id %}>Go to steps</a> </div>
     </div>
-
-    <div id="steps_div"><a href={% url 'recipe_view_steps' recipe.id %}>Go to steps</a> </div>
-
 </div>
 {% endblock %}
