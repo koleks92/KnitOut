@@ -233,7 +233,7 @@ def profile_view(request, username):
 def favorites_view(request):
     try:
         recipes = Recipe.objects.filter(favorites = request.user)
-        
+
         return render (request, "knitout/favorites.html", {
             "recipes": recipes
         })
@@ -241,6 +241,23 @@ def favorites_view(request):
         return render(request, "knitout/error.html",{
             "message": "Something went wrong! Please try again."
         })
+    
+@login_required
+def following_view(request):
+    followed_users = get_object_or_404(Follow, user = request.user).followed_users.all()
+    if len(followed_users) == 0:
+        followed_users_recipes = False
+    else:
+        followed_users_recipes = {}
+        for user in followed_users:
+            recipes = Recipe.objects.filter(user = user).order_by('-date')
+            followed_users_recipes[user] = recipes
+        
+        
+    
+    return render(request, "knitout/following.html", {
+        "followed_users_recipes": followed_users_recipes
+    })
 
 
 

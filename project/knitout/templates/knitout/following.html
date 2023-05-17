@@ -1,0 +1,29 @@
+{% extends "knitout/layout.html" %}
+
+{% block body %}
+<h1>Following</h1>
+<div id="following_div">
+    {% for user, recipes in followed_users_recipes.items %}
+        <div class="following_user_div">{{ user }}</div>
+        {% for recipe in recipes %}
+        <div class="recipe_preview">
+            <div class="recipe_preview_id">{{ recipe.id }}</div>
+            <div class="recipe_preview_name"><a href="{% url 'recipe_view' recipe.id %}">{{ recipe.name }}</a></div>
+            <div class="recipe_preview_category">{{ recipe.get_category_display }}</div>
+            <div class="recipe_preview_difficulty">{{ recipe.get_difficulty_display }}</div>
+            <div class="recipe_preview_bar">
+                <div id="recipe_down"><i class="fa-regular fa-thumbs-down"></i></div>
+                <div id="recipe_bar"><div class="progress w-25" role="progressbar" aria-label="Good/Bad"
+                aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar" style="width: 50%">
+                </div></div>
+                <div id="recipe_up"><i class="fa-regular fa-thumbs-up"></i></div>
+            </div>
+        </div>
+        {% endfor %}
+    {% endfor %}
+    <div id="following_">
+        
+    </div>
+</div>
+{% endblock %}

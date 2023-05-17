@@ -326,6 +326,19 @@ else if (currentRoute == '/favorites')
         });
     });
 }
+else if( currentRoute == '/following')
+{
+    console.log("here");
+    document.addEventListener('DOMContentLoaded', function() 
+    {
+        const recipe_divs = document.querySelectorAll(".recipe_preview");
+        recipe_divs.forEach((recipe) => {
+            const id = recipe.querySelector(".recipe_preview_id").innerHTML;
+
+            get_likes(recipe, id);  
+        });
+    });
+}
 
 function get_likes(recipe, id)
 {
