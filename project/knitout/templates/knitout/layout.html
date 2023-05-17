@@ -36,7 +36,7 @@
                   </li>
                   {% if user.is_authenticated %}
                             <li class="nav-item">
-                                <a class="nav-link" href="#">Favorites</a>
+                                <a class="nav-link" href="{% url 'favorites_view' %}">Favorites</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="#">Following</a>

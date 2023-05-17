@@ -162,7 +162,7 @@ else if (currentRoute.startsWith("/recipe/"))
     document.addEventListener('DOMContentLoaded', function() 
     {
         // Get recipe id
-        const id = currentRoute.replace("/recipe/", "");
+        const id = document.querySelector("#recipe_id").innerHTML;
         
         // Get recipe div
         const recipe = document.querySelector("#recipe_view_div");
@@ -313,6 +313,18 @@ else if (currentRoute.startsWith("/profile/"))
             })
         }
     })
+}
+else if (currentRoute == '/favorites')
+{
+    document.addEventListener('DOMContentLoaded', function() 
+    {
+        const recipe_divs = document.querySelectorAll(".recipe_preview");
+        recipe_divs.forEach((recipe) => {
+            const id = recipe.querySelector(".recipe_preview_id").innerHTML;
+
+            get_likes(recipe, id);  
+        });
+    });
 }
 
 function get_likes(recipe, id)

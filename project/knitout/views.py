@@ -228,7 +228,19 @@ def profile_view(request, username):
         return render (request, "knitout/profile.html", {
             "profile": profile
         })
-
+    
+@login_required
+def favorites_view(request):
+    try:
+        recipes = Recipe.objects.filter(favorites = request.user)
+        
+        return render (request, "knitout/favorites.html", {
+            "recipes": recipes
+        })
+    except:
+        return render(request, "knitout/error.html",{
+            "message": "Something went wrong! Please try again."
+        })
 
 
 
