@@ -12,7 +12,7 @@
         <div id="recipe_num_steps">{{ recipe.num_steps }}</div>
         <div id="recipe_date">{{ recipe.date }}</div>
         <div id="recipe_difficulty">{{ recipe.get_difficulty_display }}</div>
-        <div id="recipe_user">{{ recipe.user }}</div>
+        <div id="recipe_user"><a href="{% url 'profile_view' recipe.user %}">{{ recipe.user }}</a></div>
         <div id="recipe_likes">
             <div id="recipe_down"><i class="fa-regular fa-thumbs-down"></i></div>
             <div id="recipe_bar"><div class="progress w-25" role="progressbar" aria-label="Good/Bad"

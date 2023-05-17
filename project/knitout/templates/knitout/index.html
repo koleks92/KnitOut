@@ -9,7 +9,7 @@
         {% for recipe in recipes_follow %}
         <div class="recipe_preview">
             <div class="recipe_preview_id">{{ recipe.id }}</div>
-            <div class="recipe_preview_name">{{ recipe.name }}</div>
+            <div class="recipe_preview_name"><a href="{% url 'recipe_view' recipe.id %}">{{ recipe.name }}</a></div>
             <div class="recipe_preview_category">{{ recipe.get_category_display }}</div>
             <div class="recipe_preview_difficulty">{{ recipe.get_difficulty_display }}</div>
             <div class="recipe_preview_bar">
@@ -29,7 +29,7 @@
         {% for recipe in recipes_all %}
         <div class="recipe_preview">
             <div class="recipe_preview_id">{{ recipe.id }}</div>
-            <div class="recipe_preview_name">{{ recipe.name }}</div>
+            <div class="recipe_preview_name"><a href="{% url 'recipe_view' recipe.id %}">{{ recipe.name }}</a></div>
             <div class="recipe_preview_category">{{ recipe.get_category_display }}</div>
             <div class="recipe_preview_difficulty">{{ recipe.get_difficulty_display }}</div>
             <div class="recipe_preview_bar">
