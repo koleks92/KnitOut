@@ -267,6 +267,9 @@ else if (currentRoute.startsWith("/profile/"))
     // Get username
     const username = currentRoute.replace("/profile/", "");
 
+    // Get likes
+    get_likes_page()
+
     // Get if followed or not
     fetch(`/follow/${username}`, {
         method: "GET"

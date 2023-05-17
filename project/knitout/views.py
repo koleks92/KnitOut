@@ -28,6 +28,7 @@ class Steps_Form(forms.Form):
 ''' VIEWS '''
 
 def index(request):
+
     recipes_follow = False
 
     # Get 2 recent favorites
@@ -244,20 +245,91 @@ def favorites_view(request):
     
 @login_required
 def following_view(request):
-    followed_users = get_object_or_404(Follow, user = request.user).followed_users.all()
-    if len(followed_users) == 0:
-        followed_users_recipes = False
-    else:
-        followed_users_recipes = {}
-        for user in followed_users:
-            recipes = Recipe.objects.filter(user = user).order_by('-date')
-            followed_users_recipes[user] = recipes
-        
-        
+    try:
+        followed_users = get_object_or_404(Follow, user = request.user).followed_users.all()
+        if len(followed_users) == 0:
+            followed_users_recipes = False
+        else:
+            followed_users_recipes = {}
+            for user in followed_users:
+                recipes = Recipe.objects.filter(user = user).order_by('-date')
+                followed_users_recipes[user] = recipes
+            
+        return render(request, "knitout/following.html", {
+            "followed_users_recipes": followed_users_recipes
+        })
+    except:
+        return render(request, "knitout/error.html",{
+            "message": "Something went wrong! Please try again."
+        })
     
-    return render(request, "knitout/following.html", {
-        "followed_users_recipes": followed_users_recipes
-    })
+
+def by_difficulty(request):   
+    if request.method == "GET":
+        # Get difficulty
+        difficulty = request.GET.get("difficulty")
+
+        if difficulty == None:
+            return render(request, "knitout/by_difficulty.html")
+
+
+        # Get objects or False
+        recipes = False
+        if Recipe.objects.filter(difficulty = difficulty).exists():
+            recipes = Recipe.objects.filter(difficulty = difficulty)
+
+        # Get name to show
+        query = ":("
+        for name in Recipe.DIFFICULTY:
+            if difficulty == name[0]:
+                query = (name[1])
+
+        return render(request, "knitout/search_result.html", {
+            "query" : query,
+            "recipes": recipes
+        })
+
+
+def by_type(request): 
+     
+    if request.method == "GET":
+        # Get difficulty
+        type_name = request.GET.get("type")
+
+        if type_name == None:
+            return render(request, "knitout/by_type.html")
+
+        # Get objects or False
+        recipes = False
+        if Recipe.objects.filter(category = type_name).exists():
+            recipes = Recipe.objects.filter(category = type_name)
+
+        # Get name to show
+        query = ":("
+        for name in Recipe.CATEGORIES:
+            if type_name == name[0]:
+                query = (name[1])
+            
+
+        return render(request, "knitout/search_result.html", {
+            "query": query,
+            "recipes": recipes
+        })
+
+
+    
+def search(request):
+    query = request.GET.get('query')
+
+    # Get objects or False
+    recipes = False
+    if Recipe.objects.filter(name__icontains = query).exists():
+            recipes = Recipe.objects.filter(name__icontains = query)
+
+    return render(request, "knitout/search_result.html", {
+            "query": query,
+            "recipes": recipes
+        })
 
 
 

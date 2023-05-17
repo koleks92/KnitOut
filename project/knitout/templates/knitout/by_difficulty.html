@@ -1,0 +1,15 @@
+{% extends "knitout/layout.html" %}
+
+{% block body %}
+<h1>By Difficulty</h1>
+<div id="difficulty_div">
+    <div id="selector">
+        <form method="GET">
+        <div class="option"><button type="submit" name="difficulty" value="beginner">Beginner</button></div>
+        <div class="option"><button type="submit" name="difficulty" value="intermediate">Intermediate</button></div>
+        <div class="option"><button type="submit" name="difficulty" value="experienced">Experienced</button></div>
+        <div class="option"><button type="submit" name="difficulty" value="expert">Expert/Grandma</button></div>
+        </form>
+    </div>
+</div>
+{% endblock %}

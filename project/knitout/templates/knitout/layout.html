@@ -30,8 +30,8 @@
                       Recepies
                     </a>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#">By Difficulty</a></li>
-                      <li><a class="dropdown-item" href="#">By Type</a></li>
+                      <li><a class="dropdown-item" href="{% url 'by_difficulty' %}">By Difficulty</a></li>
+                      <li><a class="dropdown-item" href="{% url 'by_type' %}">By Type</a></li>
                     </ul>
                   </li>
                   {% if user.is_authenticated %}
@@ -56,8 +56,8 @@
                             </li>
                         {% endif %}
                 </ul>
-                <form class="d-flex" role="search">
-                  <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <form class="d-flex" role="search" method="GET" action="{% url 'search' %}">
+                  <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="query">
                   <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
               </div>
