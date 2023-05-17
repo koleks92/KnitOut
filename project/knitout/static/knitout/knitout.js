@@ -2,15 +2,7 @@ const currentRoute = window.location.pathname;
 
 if (currentRoute == "/")
 {
-    document.addEventListener('DOMContentLoaded', function() 
-    {
-        const recipe_divs = document.querySelectorAll(".recipe_preview");
-        recipe_divs.forEach((recipe) => {
-            const id = recipe.querySelector(".recipe_preview_id").innerHTML;
-
-            get_likes(recipe, id);  
-        });
-    });
+    get_likes_page();
 }
 else if (currentRoute.startsWith('/add_recipe/'))
 {
@@ -316,19 +308,15 @@ else if (currentRoute.startsWith("/profile/"))
 }
 else if (currentRoute == '/favorites')
 {
-    document.addEventListener('DOMContentLoaded', function() 
-    {
-        const recipe_divs = document.querySelectorAll(".recipe_preview");
-        recipe_divs.forEach((recipe) => {
-            const id = recipe.querySelector(".recipe_preview_id").innerHTML;
-
-            get_likes(recipe, id);  
-        });
-    });
+    get_likes_page();
 }
 else if( currentRoute == '/following')
 {
-    console.log("here");
+    get_likes_page();
+}
+
+function get_likes_page()
+{
     document.addEventListener('DOMContentLoaded', function() 
     {
         const recipe_divs = document.querySelectorAll(".recipe_preview");
