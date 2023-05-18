@@ -34,6 +34,7 @@ class Recipe(models.Model):
     num_steps = models.IntegerField(default = 0)
     jarn_amount = models.FloatField(default = 0)
     date = models.DateTimeField(auto_now_add=True)
+    image = models.ImageField(upload_to="recipes/", blank=False, default= '')
     difficulty = models.CharField(max_length=64, choices=DIFFICULTY)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")  
     favorites = models.ManyToManyField(User, blank=True, related_name="favorites")

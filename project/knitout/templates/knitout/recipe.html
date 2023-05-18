@@ -9,6 +9,7 @@
         {% endif %}
         <div id="recipe_id">{{ recipe.id }}</div>
         <div id="recipe_name">{{ recipe.name }}</div>
+        <div id="recipe_image"><img src="{{ recipe.image.url }}" alt="Recipe Image"></div>
         <div id="recipe_category">{{ recipe.get_category_display }}</div>
         <div id="recipe_num_steps">{{ recipe.num_steps }}</div>
         <div id="recipe_date">{{ recipe.date }}</div>

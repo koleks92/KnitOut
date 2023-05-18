@@ -20,10 +20,11 @@ class Recipe_Form(forms.Form):
     DIFFICULTY = Recipe.DIFFICULTY
 
     name = forms.CharField(label="Name", widget=forms.TextInput(attrs={'placeholder': 'Enter name of the recipe'}))
-    category = forms.ChoiceField(label="Category", widget=forms.Select, choices=CATEGORIES, initial=False)
+    category = forms.ChoiceField(label="Category", widget=forms.Select, choices=CATEGORIES, initial='', required=True)
     num_steps = forms.IntegerField(label="Number of Steps", min_value=2, widget=forms.NumberInput(attrs={'placeholder': 'Enter the number of steps'}))
     jarn_amount = forms.FloatField(label="Jarn Amount", min_value=0.1, widget=forms.NumberInput(attrs={'placeholder': 'Enter the amount of jarn needed'}))
-    difficulty = forms.ChoiceField(label="Difficulty", widget=forms.Select, choices=DIFFICULTY, initial=False)
+    image = forms.ImageField(label="Image", required=True)
+    difficulty = forms.ChoiceField(label="Difficulty", widget=forms.Select, choices=DIFFICULTY, initial='', required=True)
 
 class Steps_Form(forms.Form):
     description = forms.CharField(label = "", required=True, widget=forms.Textarea(attrs={'placeholder': 'Enter step description'}))
@@ -100,23 +101,25 @@ def register(request):
     
 @login_required
 def add_recipe(request):
-    try:
         if request.method == "POST":
-            # Get recipie and check if valud
-            recipe = Recipe_Form(request.POST)
+            # Get recipie and check if valid
+            recipe = Recipe_Form(request.POST, request.FILES)
             if recipe.is_valid():
                 name = recipe.cleaned_data['name']
                 category = recipe.cleaned_data['category']
                 num_steps = recipe.cleaned_data['num_steps']  
                 jarn_amount = recipe.cleaned_data['jarn_amount']   
                 difficulty = recipe.cleaned_data['difficulty']
+                image = recipe.cleaned_data['image']
                 user = request.user
+
                 # Create Recipe instance and save
                 recipe = Recipe(name = name,
                                 category = category,
                                 num_steps = num_steps,
                                 jarn_amount = jarn_amount,
                                 difficulty = difficulty,
+                                image = image,
                                 user = user)
                 recipe.save() 
 
@@ -128,7 +131,6 @@ def add_recipe(request):
             return render(request, "knitout/add_recipe.html",{
                 "add_form": Recipe_Form()
             })
-    except:
         return render(request, "knitout/error.html",{
             "message": "Something went wrong! Please try again."
         })
@@ -183,58 +185,66 @@ def recipe_view(request, id):
         })
     
 def recipe_view_steps(request, id):
-    # Get steps
-    recipe = get_object_or_404(Recipe, id = id)
-    steps = Step.objects.filter(recipe = recipe)
-    
-    return render(request, "knitout/recipe_steps.html",{
-        "steps": steps
-    })
-
-def profile_view(request, username):
-
-    if request.method == "GET":
-        user = get_object_or_404(User, username = username)
-
-        # Get name
-        name = user.username
-
-        # Get followers TODO
-        followers = 0
-
-        # Get number of recipies added by user
-        if Recipe.objects.filter(user = user):
-            num_recipes = len(Recipe.objects.filter(user = user))
-        else:
-            num_recipes = 0
-
-        # Get date user joined 
-        joined = user.date_joined
+    try:
+        # Get steps
+        recipe = get_object_or_404(Recipe, id = id)
+        steps = Step.objects.filter(recipe = recipe)
         
-        # Get recipes/Pagination
-        recipes = Recipe.objects.filter(user = user)
-        paginator = Paginator(recipes, 10)
-        page_number = request.GET.get("page")
-        page_obj = paginator.get_page(page_number)
-
-        # Check if profile belonges to logged in user
-        owner = False
-        if user == request.user:
-            owner = True
-
-        # Create profile
-        profile = {
-            "name": name,
-            "followers": followers,
-            "num_recipes": num_recipes,
-            "joined": joined,
-            "recipes": page_obj,
-            "owner": owner
-        }
-
-        return render (request, "knitout/profile.html", {
-            "profile": profile
+        return render(request, "knitout/recipe_steps.html",{
+            "steps": steps
         })
+    except:
+        return render(request, "knitout/error.html",{
+            "message": "Something went wrong! Please try again."
+        })
+def profile_view(request, username):
+    try:
+        if request.method == "GET":
+            user = get_object_or_404(User, username = username)
+
+            # Get name
+            name = user.username
+
+            # Get followers TODO
+            followers = 0
+
+            # Get number of recipies added by user
+            if Recipe.objects.filter(user = user):
+                num_recipes = len(Recipe.objects.filter(user = user))
+            else:
+                num_recipes = 0
+
+            # Get date user joined 
+            joined = user.date_joined
+            
+            # Get recipes/Pagination
+            recipes = Recipe.objects.filter(user = user)
+            paginator = Paginator(recipes, 10)
+            page_number = request.GET.get("page")
+            page_obj = paginator.get_page(page_number)
+
+            # Check if profile belonges to logged in user
+            owner = False
+            if user == request.user:
+                owner = True
+
+            # Create profile
+            profile = {
+                "name": name,
+                "followers": followers,
+                "num_recipes": num_recipes,
+                "joined": joined,
+                "recipes": page_obj,
+                "owner": owner
+            }
+
+            return render (request, "knitout/profile.html", {
+                "profile": profile
+            })
+    except:
+        return render(request, "knitout/error.html",{
+            "message": "Something went wrong! Please try again."
+        }) 
     
 @login_required
 def favorites_view(request):
@@ -280,104 +290,106 @@ def following_view(request):
         })
     
 
-def by_difficulty(request):   
-    if request.method == "GET":
-        # Get difficulty
-        difficulty = request.GET.get("q")
+def by_difficulty(request): 
+    try:  
+        if request.method == "GET":
+            # Get difficulty
+            difficulty = request.GET.get("q")
+            if difficulty == None:
+                return render(request, "knitout/by_difficulty.html")
 
-        if difficulty == None:
-            return render(request, "knitout/by_difficulty.html")
+            # Get objects or False
+            page_obj = False
+            if Recipe.objects.filter(difficulty = difficulty).exists():
+                recipes = Recipe.objects.filter(difficulty=difficulty).annotate(num_likes=Count('likes')).order_by('-num_likes')
+                paginator = Paginator(recipes, 10)
+                page_number = request.GET.get("page")
+                
+                try:
+                    page_obj = paginator.page(page_number)
+                except PageNotAnInteger:
+                    page_obj = paginator.page(1)
+                except EmptyPage:
+                    page_obj = paginator.page(paginator.num_pages)
 
-        # Get objects or False
-        page_obj = False
-        if Recipe.objects.filter(difficulty = difficulty).exists():
-            recipes = Recipe.objects.filter(difficulty=difficulty).annotate(num_likes=Count('likes')).order_by('-num_likes')
-            paginator = Paginator(recipes, 10)
-            page_number = request.GET.get("page")
-            
-            try:
-                page_obj = paginator.page(page_number)
-            except PageNotAnInteger:
-                page_obj = paginator.page(1)
-            except EmptyPage:
-                page_obj = paginator.page(paginator.num_pages)
+            # Get name to show
+            query = ":("
+            for name in Recipe.DIFFICULTY:
+                if difficulty == name[0]:
+                    query = (name[1])
 
-
-        # Get name to show
-        query = ":("
-        for name in Recipe.DIFFICULTY:
-            if difficulty == name[0]:
-                query = (name[1])
-
-        return render(request, "knitout/search_result.html", {
-            "query" : query,
-            "recipes": page_obj
+            return render(request, "knitout/search_result.html", {
+                "query" : query,
+                "recipes": page_obj
+            })
+    except:
+        return render(request, "knitout/error.html",{
+            "message": "Something went wrong! Please try again."
         })
 
+def by_type(request):   
+    try:  
+        if request.method == "GET":
+            # Get difficulty
+            type_name = request.GET.get("q")
+            if type_name == None:
+                return render(request, "knitout/by_type.html")
 
-def by_type(request): 
-     
-    if request.method == "GET":
-        # Get difficulty
-        type_name = request.GET.get("q")
+            # Get objects or False
+            page_obj = False
+            if Recipe.objects.filter(category = type_name).exists():
+                recipes = Recipe.objects.filter(category = type_name).annotate(num_likes=Count('likes')).order_by('-num_likes')
+                paginator = Paginator(recipes, 10)
+                page_number = request.GET.get("page")
+                
+                try:
+                    page_obj = paginator.page(page_number)
+                except PageNotAnInteger:
+                    page_obj = paginator.page(1)
+                except EmptyPage:
+                    page_obj = paginator.page(paginator.num_pages)
 
-        if type_name == None:
-            return render(request, "knitout/by_type.html")
+            # Get name to show
+            query = ":("
+            for name in Recipe.CATEGORIES:
+                if type_name == name[0]:
+                    query = (name[1])        
 
-        # Get objects or False
-        page_obj = False
-        if Recipe.objects.filter(category = type_name).exists():
-            recipes = Recipe.objects.filter(category = type_name).annotate(num_likes=Count('likes')).order_by('-num_likes')
-            paginator = Paginator(recipes, 10)
-            page_number = request.GET.get("page")
-            
-            try:
-                page_obj = paginator.page(page_number)
-            except PageNotAnInteger:
-                page_obj = paginator.page(1)
-            except EmptyPage:
-                page_obj = paginator.page(paginator.num_pages)
-
-        # Get name to show
-        query = ":("
-        for name in Recipe.CATEGORIES:
-            if type_name == name[0]:
-                query = (name[1])
-            
-
-        return render(request, "knitout/search_result.html", {
-            "query": query,
-            "recipes": page_obj
-        })
-
-
-    
-def search(request):
-
-    if request.method == "GET":
-
-        query = request.GET.get('q')      
-
-        # Get objects or False
-        page_obj = False
-        if Recipe.objects.filter(name__icontains = query).exists():
-            recipes = Recipe.objects.filter(name__icontains = query).annotate(num_likes=Count('likes')).order_by('-num_likes')
-            paginator = Paginator(recipes, 10)
-            page_number = request.GET.get('page')
-
-            try:
-                page_obj = paginator.page(page_number)
-            except PageNotAnInteger:
-                page_obj = paginator.page(1)
-            except EmptyPage:
-                page_obj = paginator.page(paginator.num_pages)
-
-        return render(request, "knitout/search_result.html", {
+            return render(request, "knitout/search_result.html", {
                 "query": query,
                 "recipes": page_obj
             })
+    except:
+        return render(request, "knitout/error.html",{
+            "message": "Something went wrong! Please try again."
+        })
+    
+def search(request):
+    try:
+        if request.method == "GET":
+            query = request.GET.get('q')      
+            # Get objects or False
+            page_obj = False
+            if Recipe.objects.filter(name__icontains = query).exists():
+                recipes = Recipe.objects.filter(name__icontains = query).annotate(num_likes=Count('likes')).order_by('-num_likes')
+                paginator = Paginator(recipes, 10)
+                page_number = request.GET.get('page')
 
+                try:
+                    page_obj = paginator.page(page_number)
+                except PageNotAnInteger:
+                    page_obj = paginator.page(1)
+                except EmptyPage:
+                    page_obj = paginator.page(paginator.num_pages)
 
+            return render(request, "knitout/search_result.html", {
+                    "query": query,
+                    "recipes": page_obj
+                })
+    except:
+        return render(request, "knitout/error.html",{
+            "message": "Something went wrong! Please try again."
+        })
 
 '''API likes/dislikes, favorites, follow'''
 @csrf_exempt
@@ -394,9 +406,9 @@ def likes(request, id):
             # Calculate procentege of likes
             if num_likes == 0 and num_dislikes == 0:
                 procent_likes = 50
-            elif num_likes == 0:
+            elif num_likes == 0 and num_dislikes != 0:
                 procent_likes = 0
-            elif num_dislikes == 0:
+            elif num_dislikes == 0 and num_likes != 0:
                 procent_likes = 100
             else:
                 procent_likes = num_likes / (num_likes + num_dislikes) * 100

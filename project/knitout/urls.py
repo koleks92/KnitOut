@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
         # INDEX/SEARCH
@@ -27,3 +29,6 @@ urlpatterns = [
         path("by_difficulty", views.by_difficulty, name="by_difficulty"),
         path("by_type", views.by_type, name="by_type")
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
