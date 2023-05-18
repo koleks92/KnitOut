@@ -6,6 +6,9 @@ from django.db import IntegrityError
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Count
+
 
  
 from .models import User, Recipe, Step, Follow
@@ -176,7 +179,7 @@ def recipe_view(request, id):
         })
     except:
         return render(request, "knitout/error.html", {
-            "message": "Cannot find given recipie. Please try again."
+            "message": "Cannot find given recipe. Please try again."
         })
     
 def recipe_view_steps(request, id):
@@ -208,8 +211,11 @@ def profile_view(request, username):
         # Get date user joined 
         joined = user.date_joined
         
-        # Get recipes
+        # Get recipes/Pagination
         recipes = Recipe.objects.filter(user = user)
+        paginator = Paginator(recipes, 10)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
 
         # Check if profile belonges to logged in user
         owner = False
@@ -222,7 +228,7 @@ def profile_view(request, username):
             "followers": followers,
             "num_recipes": num_recipes,
             "joined": joined,
-            "recipes": recipes,
+            "recipes": page_obj,
             "owner": owner
         }
 
@@ -235,8 +241,13 @@ def favorites_view(request):
     try:
         recipes = Recipe.objects.filter(favorites = request.user)
 
+        # Paginator
+        paginator = Paginator(recipes, 10)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
         return render (request, "knitout/favorites.html", {
-            "recipes": recipes
+            "recipes": page_obj
         })
     except:
         return render(request, "knitout/error.html",{
@@ -248,15 +259,20 @@ def following_view(request):
     try:
         followed_users = get_object_or_404(Follow, user = request.user).followed_users.all()
         if len(followed_users) == 0:
-            followed_users_recipes = False
+            users_recipes = False
         else:
-            followed_users_recipes = {}
+            users_recipes = []
             for user in followed_users:
-                recipes = Recipe.objects.filter(user = user).order_by('-date')
-                followed_users_recipes[user] = recipes
+                user_recipes = Recipe.objects.filter(user=user).order_by('-date')[:4]
+                users_recipes.append((user, user_recipes))
+            # Paginator
+            paginator = Paginator(users_recipes, 4)
+            page_number = request.GET.get("page")
+            page_obj = paginator.get_page(page_number)
+        
             
         return render(request, "knitout/following.html", {
-            "followed_users_recipes": followed_users_recipes
+            "users_recipes": page_obj
         })
     except:
         return render(request, "knitout/error.html",{
@@ -267,16 +283,25 @@ def following_view(request):
 def by_difficulty(request):   
     if request.method == "GET":
         # Get difficulty
-        difficulty = request.GET.get("difficulty")
+        difficulty = request.GET.get("q")
 
         if difficulty == None:
             return render(request, "knitout/by_difficulty.html")
 
-
         # Get objects or False
-        recipes = False
+        page_obj = False
         if Recipe.objects.filter(difficulty = difficulty).exists():
-            recipes = Recipe.objects.filter(difficulty = difficulty)
+            recipes = Recipe.objects.filter(difficulty=difficulty).annotate(num_likes=Count('likes')).order_by('-num_likes')
+            paginator = Paginator(recipes, 10)
+            page_number = request.GET.get("page")
+            
+            try:
+                page_obj = paginator.page(page_number)
+            except PageNotAnInteger:
+                page_obj = paginator.page(1)
+            except EmptyPage:
+                page_obj = paginator.page(paginator.num_pages)
+
 
         # Get name to show
         query = ":("
@@ -286,7 +311,7 @@ def by_difficulty(request):
 
         return render(request, "knitout/search_result.html", {
             "query" : query,
-            "recipes": recipes
+            "recipes": page_obj
         })
 
 
@@ -294,15 +319,24 @@ def by_type(request):
      
     if request.method == "GET":
         # Get difficulty
-        type_name = request.GET.get("type")
+        type_name = request.GET.get("q")
 
         if type_name == None:
             return render(request, "knitout/by_type.html")
 
         # Get objects or False
-        recipes = False
+        page_obj = False
         if Recipe.objects.filter(category = type_name).exists():
-            recipes = Recipe.objects.filter(category = type_name)
+            recipes = Recipe.objects.filter(category = type_name).annotate(num_likes=Count('likes')).order_by('-num_likes')
+            paginator = Paginator(recipes, 10)
+            page_number = request.GET.get("page")
+            
+            try:
+                page_obj = paginator.page(page_number)
+            except PageNotAnInteger:
+                page_obj = paginator.page(1)
+            except EmptyPage:
+                page_obj = paginator.page(paginator.num_pages)
 
         # Get name to show
         query = ":("
@@ -313,23 +347,35 @@ def by_type(request):
 
         return render(request, "knitout/search_result.html", {
             "query": query,
-            "recipes": recipes
+            "recipes": page_obj
         })
 
 
     
 def search(request):
-    query = request.GET.get('query')
 
-    # Get objects or False
-    recipes = False
-    if Recipe.objects.filter(name__icontains = query).exists():
-            recipes = Recipe.objects.filter(name__icontains = query)
+    if request.method == "GET":
 
-    return render(request, "knitout/search_result.html", {
-            "query": query,
-            "recipes": recipes
-        })
+        query = request.GET.get('q')      
+
+        # Get objects or False
+        page_obj = False
+        if Recipe.objects.filter(name__icontains = query).exists():
+            recipes = Recipe.objects.filter(name__icontains = query).annotate(num_likes=Count('likes')).order_by('-num_likes')
+            paginator = Paginator(recipes, 10)
+            page_number = request.GET.get('page')
+
+            try:
+                page_obj = paginator.page(page_number)
+            except PageNotAnInteger:
+                page_obj = paginator.page(1)
+            except EmptyPage:
+                page_obj = paginator.page(paginator.num_pages)
+
+        return render(request, "knitout/search_result.html", {
+                "query": query,
+                "recipes": page_obj
+            })
 
 
 

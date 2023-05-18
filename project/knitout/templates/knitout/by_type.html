@@ -4,16 +4,16 @@
 <h1>By Type</h1>
 <div id="type_div">
     <div id="selector">
-        <form method="GET">
-        <div class="option"><button type="submit" name="type" value="hats">Hats</button></div>
-        <div class="option"><button type="submit" name="type" value="sweaters">Sweaters and Jumpers</button></div>
-        <div class="option"><button type="submit" name="type" value="scarves">Scarves</button></div>
-        <div class="option"><button type="submit" name="type" value="blankets">Blankets and Throws</button></div>
-        <div class="option"><button type="submit" name="type" value="cardigans">Cardigans</button></div>
-        <div class="option"><button type="submit" name="type" value="socks">Socks</button></div>
-        <div class="option"><button type="submit" name="type" value="gloves">Gloves</button></div>
-        <div class="option"><button type="submit" name="type" value="toys">Toys</button></div>
-        <div class="option"><button type="submit" name="type" value="other">Other</button></div>
+        <form class="d-flex" method="GET" action="{% url 'by_type' %}">
+        <div class="option"><button type="submit" name="q" value="hats">Hats</button></div>
+        <div class="option"><button type="submit" name="q" value="sweaters">Sweaters and Jumpers</button></div>
+        <div class="option"><button type="submit" name="q" value="scarves">Scarves</button></div>
+        <div class="option"><button type="submit" name="q" value="blankets">Blankets and Throws</button></div>
+        <div class="option"><button type="submit" name="q" value="cardigans">Cardigans</button></div>
+        <div class="option"><button type="submit" name="q" value="socks">Socks</button></div>
+        <div class="option"><button type="submit" name="q" value="gloves">Gloves</button></div>
+        <div class="option"><button type="submit" name="q" value="toys">Toys</button></div>
+        <div class="option"><button type="submit" name="q" value="other">Other</button></div>
 
         </form>
     </div>

@@ -1,4 +1,5 @@
-const currentRoute = window.location.pathname;
+const currentRoute = window.location.pathname + window.location.search;
+
 
 if (currentRoute == "/")
 {
@@ -309,11 +310,7 @@ else if (currentRoute.startsWith("/profile/"))
         }
     })
 }
-else if (currentRoute == '/favorites')
-{
-    get_likes_page();
-}
-else if( currentRoute == '/following')
+else if (currentRoute == '/favorites' || currentRoute == '/following' || currentRoute.includes('q='))
 {
     get_likes_page();
 }
