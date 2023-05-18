@@ -3,14 +3,18 @@
 {% block body %}
 <h1>Steps</h1>
 <div id="recipie_steps_div">
+<div id="recipe_id">{{ id }}</div>
     {% for step in steps %}
     <div class="recipe_step" id="recipe_step_{{ forloop.counter }}">
+        {% if user.is_authenticated %}
+        <div class="bookmark_div"><button class="bookmark_button" name="step_number" value="{{ forloop.counter|add:'-1' }}">Bookmark</button></div>
+        {% endif %}
         <div class="recipie_step_counter">{{ forloop.counter }}</div>
         <div class="recipie_step_text">{{ step.description }}</div>
     </div>
     {% endfor %}
     <div id="add_step_buttons">
-        <button id="recipe_step_prev" disabled>Previous</button>
+        <button id="recipe_step_prev">Previous</button>
         <button id="recipe_step_next">Next</button>
     </div>
 

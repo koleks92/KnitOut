@@ -191,7 +191,8 @@ def recipe_view_steps(request, id):
         steps = Step.objects.filter(recipe = recipe)
         
         return render(request, "knitout/recipe_steps.html",{
-            "steps": steps
+            "steps": steps,
+            "id": id
         })
     except:
         return render(request, "knitout/error.html",{
@@ -544,5 +545,47 @@ def follow(request, username):
             follow.followed_users.add(user)
             message = "Followed"
 
-        return JsonResponse({"message": message})    
+        return JsonResponse({"message": message})
+
+@csrf_exempt
+@login_required
+def bookmark(request, id, step):
+    recipe = get_object_or_404(Recipe, id = id)
+
+    if request.method == "GET":
+        if Step.objects.filter(recipe = recipe, bookmark_user = request.user).exists():
+            step_obj = Step.objects.get(recipe = recipe, bookmark_user = request.user)
+            # Send step if exists
+            return JsonResponse({"message": step_obj.step})
+        else:
+            return JsonResponse({"message": "no_bookmark"})
+        
+    if request.method == "PUT":
+        # If just Remove Bookmark
+        if Step.objects.filter(recipe = recipe, bookmark_user = request.user, step = step).exists():
+            step_obj = Step.objects.get(recipe = recipe, bookmark_user = request.user, step = step)
+            step_obj.bookmark_user.remove(request.user)
+            return JsonResponse({"message": "Removed"})
+        else:
+        # Else if add bookmark
+            # If one already exists, then remove, and and new one
+            if Step.objects.filter(recipe = recipe, bookmark_user = request.user).exists():
+                step_obj_remove = Step.objects.get(recipe = recipe, bookmark_user = request.user)
+                step_obj_remove.bookmark_user.remove(request.user)
+                step_obj = Step.objects.get(recipe = recipe, step = step)
+                step_obj.bookmark_user.add(request.user)
+                return JsonResponse({"message": "RemovedAdded"})
+            # If doesnt exist, just add new one
+            else:
+                step_obj = Step.objects.get(recipe = recipe, step = step)
+                step_obj.bookmark_user.add(request.user)
+                return JsonResponse({"message": "Added"})
+
+
+
+
+
+    
+
+
             

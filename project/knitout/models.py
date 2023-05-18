@@ -49,6 +49,7 @@ class Step(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     step = models.IntegerField()
     description = models.TextField()
+    bookmark_user = models.ManyToManyField(User, blank=True, related_name="bookmark_user")
 
     class Meta:
         unique_together = ['recipe', 'step']

@@ -98,21 +98,77 @@ else if (currentRoute.endsWith('steps'))
 {
     document.addEventListener('DOMContentLoaded', function() 
     {
-        // Get all form steps and buttons
+        // Get all form steps and buttons, recipe_id
         const formSteps = document.querySelectorAll(".recipe_step");
         const prevButton = document.getElementById("recipe_step_prev");
         const nextButton = document.getElementById("recipe_step_next");
+        const bookmark_buttons = document.querySelectorAll(".bookmark_button");
+        const id = document.querySelector("#recipe_id").innerHTML;
 
-        // Set initial step and disable previous button and send button
         let currentStep = 0;
-        prevButton.disabled = true;
 
-        // Hide other views and show first
-        formSteps[currentStep].style.display = "block";
-        for (let i=1; i < formSteps.length; i++)
-        {
-            formSteps[i].style.display = "none";
-        }
+        // Check if booked
+        fetch(`/bookmark/${id}/${currentStep}`, {
+            method: "GET"
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message == "no_bookmark")
+            {
+                // Start from beggining
+                currentStep = 0;
+            }
+            else
+            {
+                // Get bookmarked step
+                currentStep = parseInt(data.message);
+                formSteps[currentStep].querySelector(".bookmark_button").innerHTML = "Remove Bookmark";
+            }
+            // Hide all views and show currentStep
+            for (let i=0; i < formSteps.length; i++)
+            {
+                formSteps[i].style.display = "none";
+            }
+            formSteps[currentStep].style.display = "block";
+            // Disable previous button if on first step
+            if (currentStep === 0) {
+                prevButton.disabled = true;
+            }
+            // Enable next button if previously disabled
+            if (currentStep === formSteps.length - 1) {
+                nextButton.disabled = true;
+            }
+        })
+
+        // Add click event listener to bookmark_buttons
+        bookmark_buttons.forEach((button) => {
+            button.addEventListener("click", () => {
+                step = button.value;
+                fetch(`/bookmark/${id}/${step}`, {
+                    method: "PUT"
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message == "Removed")
+                    {
+                        button.innerHTML = "Bookmark"
+                    }
+                    else if (data.message == "Added")
+                    {
+                        button.innerHTML = "Remove Bookmark";
+                    }
+                    else if (data.message == "RemovedAdded")
+                    {
+                        bookmark_buttons.forEach((button) => {
+                            button.innerHTML = "Bookmark";
+                        })
+                        button.innerHTML = "Remove Bookmark";
+                    }
+                })
+            })
+        })
+     
+
 
         // Add click event listeners to buttons
         prevButton.addEventListener("click", () => {
@@ -314,6 +370,7 @@ else if (currentRoute == '/favorites' || currentRoute == '/following' || current
 {
     get_likes_page();
 }
+
 
 function get_likes_page()
 {
