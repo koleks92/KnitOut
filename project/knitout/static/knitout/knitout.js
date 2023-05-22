@@ -98,112 +98,164 @@ else if (currentRoute.endsWith('steps'))
 {
     document.addEventListener('DOMContentLoaded', function() 
     {
-        // Get all form steps and buttons, recipe_id
+        // Get all form steps and buttons, recipe_id, edit
         const formSteps = document.querySelectorAll(".recipe_step");
         const prevButton = document.getElementById("recipe_step_prev");
         const nextButton = document.getElementById("recipe_step_next");
-        const bookmark_buttons = document.querySelectorAll(".bookmark_button");
+        const bookmarkButtons = document.querySelectorAll(".bookmark_button");
+        const editButtons = document.querySelectorAll(".edit_button");
         const id = document.querySelector("#recipe_id").innerHTML;
 
-        let currentStep = 0;
+        // Only for owner of recipe, (if edit buttons show)
+        if (editButtons.length > 0)
+        {
+            editButtons.forEach(function(button) {
+                button.addEventListener('click', function(event)
+                {
+                    // Get parent div
+                    const recipeDiv = event.target.parentNode.parentNode;
+                    // Get step, step description, edit button
+                    const step = button.value;
+                    const step_text = recipeDiv.querySelector('.recipe_step_text');
+                    const edit_div = recipeDiv.querySelector('.edit_div');
+                    const edit_button = edit_div.querySelector('.edit_button');
 
-        // Check if booked
-        fetch(`/bookmark/${id}/${currentStep}`, {
-            method: "GET"
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message == "no_bookmark")
-            {
-                // Start from beggining
-                currentStep = 0;
-            }
-            else
-            {
-                // Get bookmarked step
-                currentStep = parseInt(data.message);
-                formSteps[currentStep].querySelector(".bookmark_button").innerHTML = "Remove Bookmark";
-            }
-            // Hide all views and show currentStep
-            for (let i=0; i < formSteps.length; i++)
-            {
-                formSteps[i].style.display = "none";
-            }
-            formSteps[currentStep].style.display = "block";
-            // Disable previous button if on first step
-            if (currentStep === 0) {
-                prevButton.disabled = true;
-            }
-            // Enable next button if previously disabled
-            if (currentStep === formSteps.length - 1) {
-                nextButton.disabled = true;
-            }
-        })
+                    // Create textarea for edit
+                    const edit_text = document.createElement("textarea");
+                    edit_text.classList.add("edit_textarea");
+                    edit_text.innerHTML = step_text.innerHTML;
+                    recipeDiv.replaceChild(edit_text, step_text);
 
-        // Add click event listener to bookmark_buttons
-        bookmark_buttons.forEach((button) => {
-            button.addEventListener("click", () => {
-                step = button.value;
-                fetch(`/bookmark/${id}/${step}`, {
-                    method: "PUT"
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message == "Removed")
-                    {
-                        button.innerHTML = "Bookmark"
-                    }
-                    else if (data.message == "Added")
-                    {
-                        button.innerHTML = "Remove Bookmark";
-                    }
-                    else if (data.message == "RemovedAdded")
-                    {
-                        bookmark_buttons.forEach((button) => {
-                            button.innerHTML = "Bookmark";
+
+
+                    // Create button to save 
+                    const save_button = document.createElement("button");
+                    save_button.classList.add("save_button");
+                    save_button.innerHTML = "Save";
+                    save_button.addEventListener('click', function() {
+                        const edit_description = recipeDiv.querySelector(".edit_textarea").value;
+                        fetch(`/edit/${id}/${step}`, {
+                            method: "POST",
+                            body: JSON.stringify
+                            ({
+                                body: edit_description
+                            })
                         })
-                        button.innerHTML = "Remove Bookmark";
-                    }
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data.message);
+                            step_text.innerHTML = edit_text.value;
+                            recipeDiv.replaceChild(step_text, edit_text);
+                            edit_div.replaceChild(edit_button, save_button);
+
+                        })
+                    })
+                    edit_div.replaceChild(save_button, edit_button);
                 })
             })
-        })
-     
+        }
+
+        let currentStep = 0;
+        // Only for logged in users (if bookmark buttons shows)
+        if (bookmarkButtons.length > 0)
+        {
+            // Check if booked
+            fetch(`/bookmark/${id}/${currentStep}`, {
+                method: "GET"
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message == "no_bookmark")
+                {
+                    // Start from beggining
+                    currentStep = 0;
+                }
+                else
+                {
+                    // Get bookmarked step
+                    currentStep = parseInt(data.message);
+                    formSteps[currentStep].querySelector(".bookmark_button").innerHTML = "Remove Bookmark";
+                }
+                // Hide all views and show currentStep
+                for (let i=0; i < formSteps.length; i++)
+                {
+                    formSteps[i].style.display = "none";
+                }
+                formSteps[currentStep].style.display = "block";
+                // Disable previous button if on first step
+                if (currentStep === 0) {
+                    prevButton.disabled = true;
+                }
+                // Enable next button if previously disabled
+                if (currentStep === formSteps.length - 1) {
+                    nextButton.disabled = true;
+                }
+            })
+
+            // Add click event listener to bookmark_buttons
+            bookmarkButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    step = button.value;
+                    fetch(`/bookmark/${id}/${step}`, {
+                        method: "PUT"
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message == "Removed")
+                        {
+                            button.innerHTML = "Bookmark"
+                        }
+                        else if (data.message == "Added")
+                        {
+                            button.innerHTML = "Remove Bookmark";
+                        }
+                        else if (data.message == "RemovedAdded")
+                        {
+                            bookmarkButtons.forEach((button) => {
+                                button.innerHTML = "Bookmark";
+                            })
+                            button.innerHTML = "Remove Bookmark";
+                        }
+                    })
+                })
+            })
+        
 
 
-        // Add click event listeners to buttons
-        prevButton.addEventListener("click", () => {
-            // Hide current step
-            formSteps[currentStep].style.display = "none";
-            // Decrement step and show previous step
-            currentStep--;
-            formSteps[currentStep].style.display = "block";
-            // Disable previous button if on first step
-            if (currentStep === 0) {
-                prevButton.disabled = true;
-            }
-            // Enable next button if previously disabled
-            if (nextButton.disabled) {
-                nextButton.disabled = false;
-            }
-        });
+            // Add click event listeners to buttons
+            prevButton.addEventListener("click", () => {
+                // Hide current step
+                formSteps[currentStep].style.display = "none";
+                // Decrement step and show previous step
+                currentStep--;
+                formSteps[currentStep].style.display = "block";
+                // Disable previous button if on first step
+                if (currentStep === 0) {
+                    prevButton.disabled = true;
+                }
+                // Enable next button if previously disabled
+                if (nextButton.disabled) {
+                    nextButton.disabled = false;
+                }
+            });
 
-        nextButton.addEventListener("click", () => {
-            // Hide current step
-            formSteps[currentStep].style.display = "none";
-            // Increment step and show next step
-            currentStep++;
-            formSteps[currentStep].style.display = "block";
-            // Disable next button if on last step
-            if (currentStep === formSteps.length - 1) {
-                nextButton.disabled = true;
-            }
-            // Enable previous button if previously disabled
-            if (prevButton.disabled) {
-                prevButton.disabled = false;
-            }
-            
-        });       
-
+            nextButton.addEventListener("click", () => {
+                // Hide current step
+                formSteps[currentStep].style.display = "none";
+                // Increment step and show next step
+                currentStep++;
+                formSteps[currentStep].style.display = "block";
+                // Disable next button if on last step
+                if (currentStep === formSteps.length - 1) {
+                    nextButton.disabled = true;
+                }
+                // Enable previous button if previously disabled
+                if (prevButton.disabled) {
+                    prevButton.disabled = false;
+                }
+                
+            });       
+        }
     });
 }
 else if (currentRoute.startsWith("/recipe/"))

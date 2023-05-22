@@ -6,8 +6,9 @@ from django.db import IntegrityError
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Count
+from django.core.paginator import Paginator
+
+import json
 
 
  
@@ -189,10 +190,15 @@ def recipe_view_steps(request, id):
         # Get steps
         recipe = get_object_or_404(Recipe, id = id)
         steps = Step.objects.filter(recipe = recipe)
+
+        owner = False
+        if recipe.user == request.user:
+            owner = True
         
         return render(request, "knitout/recipe_steps.html",{
             "steps": steps,
-            "id": id
+            "id": id,
+            "owner": owner
         })
     except:
         return render(request, "knitout/error.html",{
@@ -580,6 +586,27 @@ def bookmark(request, id, step):
                 step_obj = Step.objects.get(recipe = recipe, step = step)
                 step_obj.bookmark_user.add(request.user)
                 return JsonResponse({"message": "Added"})
+            
+@csrf_exempt
+@login_required
+def edit(request, id, step):
+    recipe = get_object_or_404(Recipe, id = id)
+    step = get_object_or_404(Step, recipe = recipe, step = step)
+
+    print(step)
+
+    if request.method == "POST" and recipe.user == request.user:
+        # Get data, and edited description
+        data = json.loads(request.body)
+        edited_description = data.get("body", "")
+
+        # Replace and save
+        step.description = edited_description
+        step.save()
+
+        return JsonResponse({"message": "Edit sucessful"})
+
+        
 
 
 

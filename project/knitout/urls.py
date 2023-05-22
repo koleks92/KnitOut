@@ -24,6 +24,7 @@ urlpatterns = [
         path("favorites/<int:id>", views.favorites, name="favorites"),
         path("follow/<str:username>", views.follow, name="follow"),
         path("bookmark/<int:id>/<int:step>", views.bookmark, name="bookmark"),
+        path("edit/<int:id>/<int:step>", views.edit, name="edit"),
         # REST
         path("favorites", views.favorites_view, name="favorites_view"),
         path("following", views.following_view, name="following_view"),

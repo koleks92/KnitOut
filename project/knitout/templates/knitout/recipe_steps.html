@@ -9,8 +9,11 @@
         {% if user.is_authenticated %}
         <div class="bookmark_div"><button class="bookmark_button" name="step_number" value="{{ forloop.counter|add:'-1' }}">Bookmark</button></div>
         {% endif %}
-        <div class="recipie_step_counter">{{ forloop.counter }}</div>
-        <div class="recipie_step_text">{{ step.description }}</div>
+        <div class="recipe_step_counter">{{ forloop.counter }}</div>
+        {% if owner %}
+        <div class="edit_div"><button class="edit_button" name="edit_number" value="{{ forloop.counter|add:'-1'}}">Edit</button></div>
+        {% endif%}
+        <div class="recipe_step_text">{{ step.description }}</div>
     </div>
     {% endfor %}
     <div id="add_step_buttons">
