@@ -1,53 +1,64 @@
 {% extends "knitout/layout.html" %}
 
 {% block body %}
-<h1>Index</h1>
 <div id="index_div">
     {% if user.is_authenticated %}
-    <div id="recently_added_follow">
-        Recently added recipes from followed users
-        {% if recipes_follow %}
+    <p class="title_text">Recently added recipes from followed users</p>
+    {% if recipes_follow %}
+        <div class="recipes_all">
             {% for recipe in recipes_follow %}
-            <div class="recipe_preview">
-                <div class="recipe_preview_id">{{ recipe.id }}</div>
-                <div class="recipe_preview_name"><a href="{% url 'recipe_view' recipe.id %}">{{ recipe.name }}</a></div>
-                <div class="recipe_preview_image"><img src="{{ recipe.image.url }}" alt="Recipe Image"></div>
-                <div class="recipe_preview_category">{{ recipe.get_category_display }}</div>
-                <div class="recipe_preview_difficulty">{{ recipe.get_difficulty_display }}</div>
-                <div class="recipe_preview_bar">
-                    <div id="recipe_down"><i class="fa-regular fa-thumbs-down"></i></div>
-                    <div id="recipe_bar"><div class="progress w-25" role="progressbar" aria-label="Good/Bad"
-                    aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress-bar" style="width: 50%">
-                    </div></div>
-                    <div id="recipe_up"><i class="fa-regular fa-thumbs-up"></i></div>
+            <a class="recipe_preview_link" href="{% url 'recipe_view' recipe.id %}">
+                <div class="recipe_preview">
+                    <div class="recipe_preview_id">{{ recipe.id }}</div>
+                    <div class="recipe_preview_name">{{ recipe.name }}</div>
+                    <div class="recipe_preview_category">{{ recipe.get_category_display }}</div>
+                    <div class="recipe_preview_image"><img class="recipe_preview_image_img" src="{{ recipe.image.url }}" alt="Recipe Image"></div>
+                    <div class="recipe_preview_difficulty">{{ recipe.get_difficulty_display }}</div>
+                    <div class="recipe_preview_bar">
+                        <div class="recipe_down">
+                            <i class="fa-regular fa-thumbs-down"></i>
+                        </div>
+                            <div class="progress w-50" role="progressbar" aria-label="Good/Bad"
+                        aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar" style="width: 50%"></div>
+                            </div>
+                        <div class="recipe_up">
+                            <i class="fa-regular fa-thumbs-up"></i>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </a>
             {% endfor %}
         {% else %}
         <p class="replace_text">There are no recipes yet :(</p>
         {% endif %}
     </div>
     {% endif %}
-    <div id="recently_added_all">
-        Recently added recipes
-        {% if recipes_all %}
+    <p class="title_text">Recently added recipes</p>
+    {% if recipes_all %}
+        <div class="recipes_all">
             {% for recipe in recipes_all %}
+            <a class="recipe_preview_link" href="{% url 'recipe_view' recipe.id %}">
             <div class="recipe_preview">
                 <div class="recipe_preview_id">{{ recipe.id }}</div>
-                <div class="recipe_preview_name"><a href="{% url 'recipe_view' recipe.id %}">{{ recipe.name }}</a></div>
-                <div class="recipe_preview_image"><img src="{{ recipe.image.url }}" alt="Recipe Image"></div>
+                <div class="recipe_preview_name">{{ recipe.name }}</div>
                 <div class="recipe_preview_category">{{ recipe.get_category_display }}</div>
+                <div class="recipe_preview_image"><img class="recipe_preview_image_img" src="{{ recipe.image.url }}" alt="Recipe Image"></div>
                 <div class="recipe_preview_difficulty">{{ recipe.get_difficulty_display }}</div>
                 <div class="recipe_preview_bar">
-                    <div id="recipe_down"><i class="fa-regular fa-thumbs-down"></i></div>
-                    <div id="recipe_bar"><div class="progress w-25" role="progressbar" aria-label="Good/Bad"
+                    <div class="recipe_down">
+                        <i class="fa-regular fa-thumbs-down"></i>
+                    </div>
+                        <div class="progress w-50" role="progressbar" aria-label="Good/Bad"
                     aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress-bar" style="width: 50%">
-                    </div></div>
-                    <div id="recipe_up"><i class="fa-regular fa-thumbs-up"></i></div>
+                            <div class="progress-bar" style="width: 50%"></div>
+                        </div>
+                    <div class="recipe_up">
+                        <i class="fa-regular fa-thumbs-up"></i>
+                    </div>
                 </div>
             </div>
+            </a>
             {% endfor %}
         {% else %}
         <p class="replace_text">There are no recipes yet :(</p>
