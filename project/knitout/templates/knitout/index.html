@@ -12,8 +12,8 @@
                     <div class="recipe_preview_id">{{ recipe.id }}</div>
                     <div class="recipe_preview_name">{{ recipe.name }}</div>
                     <div class="recipe_preview_category">{{ recipe.get_category_display }}</div>
-                    <div class="recipe_preview_image"><img class="recipe_preview_image_img" src="{{ recipe.image.url }}" alt="Recipe Image"></div>
                     <div class="recipe_preview_difficulty">{{ recipe.get_difficulty_display }}</div>
+                    <div class="recipe_preview_image"><img class="recipe_preview_image_img" src="{{ recipe.image.url }}" alt="Recipe Image"></div>
                     <div class="recipe_preview_bar">
                         <div class="recipe_down">
                             <i class="fa-regular fa-thumbs-down"></i>
@@ -43,8 +43,8 @@
                 <div class="recipe_preview_id">{{ recipe.id }}</div>
                 <div class="recipe_preview_name">{{ recipe.name }}</div>
                 <div class="recipe_preview_category">{{ recipe.get_category_display }}</div>
+                <div class="recipe_preview_difficulty"><b>{{ recipe.get_difficulty_display }}</b></div>
                 <div class="recipe_preview_image"><img class="recipe_preview_image_img" src="{{ recipe.image.url }}" alt="Recipe Image"></div>
-                <div class="recipe_preview_difficulty">{{ recipe.get_difficulty_display }}</div>
                 <div class="recipe_preview_bar">
                     <div class="recipe_down">
                         <i class="fa-regular fa-thumbs-down"></i>

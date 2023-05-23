@@ -1,30 +1,32 @@
 {% extends "knitout/layout.html" %}
 
 {% block body %}
-
-    <h2 id="heading">Register</h2>
+<div id="login_reg">
+    <p class="title_text_big">Register</p>
 
     {% if message %}
-        <div>{{ message }}</div>
+        <div class="replace_text">{{ message }}</div>
     {% endif %}
 
     <form action="{% url 'register' %}" method="post">
         {% csrf_token %}
         <div class="form-group">
-            <input class="form-control" autofocus type="text" name="username" placeholder="Username">
+            <input class="login_forms" autofocus type="text" name="username" placeholder="Username">
         </div>
         <div class="form-group">
-            <input class="form-control" type="email" name="email" placeholder="Email Address">
+            <input class="login_forms" type="email" name="email" placeholder="Email Address">
         </div>
         <div class="form-group">
-            <input class="form-control" type="password" name="password" placeholder="Password">
+            <input class="login_forms" type="password" name="password" placeholder="Password">
         </div>
         <div class="form-group">
-            <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
+            <input class="login_forms" type="password" name="confirmation" placeholder="Confirm Password">
         </div>
-        <input class="btn btn-primary" type="submit" value="Register">
+        <div class="submit_div">
+            <input class="btn btn-dark" type="submit" value="Register">
+        </div>
     </form>
 
-    Already have an account? <a href="{% url 'login' %}">Log In here.</a>
-
+    <p>Already have an account? <a href="{% url 'login' %}">Log In here.</a></p>
+</div>
 {% endblock %}

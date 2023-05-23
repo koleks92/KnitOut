@@ -1,14 +1,14 @@
 {% extends "knitout/layout.html" %}
 
 {% block body %}
-<h1>By Difficulty</h1>
+<p class="title_text_big">By Difficulty</p>
 <div id="difficulty_div">
     <div id="selector">
-        <form class="d-flex" method="GET" action="{% url 'by_difficulty' %}">
-            <div class="option"><button type="submit" name="q" value="beginner">Beginner</button></div>
-            <div class="option"><button type="submit" name="q" value="intermediate">Intermediate</button></div>
-            <div class="option"><button type="submit" name="q" value="experienced">Experienced</button></div>
-            <div class="option"><button type="submit" name="q" value="expert">Expert/Grandma</button></div>
+        <form method="GET" action="{% url 'by_difficulty' %}">
+            <div class="option"><button class="option_btn" type="submit" name="q" value="beginner">Beginner</button></div>
+            <div class="option"><button class="option_btn" type="submit" name="q" value="intermediate">Intermediate</button></div>
+            <div class="option"><button class="option_btn" type="submit" name="q" value="experienced">Experienced</button></div>
+            <div class="option"><button class="option_btn" type="submit" name="q" value="expert">Expert/Grandma</button></div>
         </form>
     </div>
 </div>

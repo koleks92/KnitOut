@@ -1,24 +1,26 @@
 {% extends "knitout/layout.html" %}
 
 {% block body %}
-
-    <h2 id="heading">Login</h2>
+<div id="login_reg">
+    <p class="title_text_big">Login</p>
 
     {% if message %}
-        <div>{{ message }}</div>
+        <div class="replace_text">{{ message }}</div>
     {% endif %}
 
     <form action="{% url 'login' %}" method="post">
         {% csrf_token %}
         <div class="form-group">
-            <input autofocus class="form-control" type="text" name="username" placeholder="Username">
+            <input autofocus class="login_forms" type="text" name="username" placeholder="Username">
         </div>
         <div class="form-group">
-            <input class="form-control" type="password" name="password" placeholder="Password">
+            <input class="login_forms" type="password" name="password" placeholder="Password">
         </div>
-        <input class="btn btn-primary" type="submit" value="Login">
+        <div class="submit_div">
+            <input class="btn btn-dark" type="submit" value="Login">
+        </div>    
     </form>
-
-    Don't have an account? <a href="{% url 'register' %}">Register here.</a>
-
+    <p>Don't have an account?
+    <a href="{% url 'register' %}">Register here.</a></p>
+</div>
 {% endblock %}

@@ -6,7 +6,9 @@ from django.db import IntegrityError
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Count
+
 
 import json
 
@@ -298,7 +300,6 @@ def following_view(request):
     
 
 def by_difficulty(request): 
-    try:  
         if request.method == "GET":
             # Get difficulty
             difficulty = request.GET.get("q")
@@ -329,7 +330,6 @@ def by_difficulty(request):
                 "query" : query,
                 "recipes": page_obj
             })
-    except:
         return render(request, "knitout/error.html",{
             "message": "Something went wrong! Please try again."
         })
