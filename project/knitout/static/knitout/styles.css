@@ -1,0 +1,55 @@
+/* COLORS */
+:root {
+    /* one */
+    --dark: #032b2b;
+    --light_salmon: #F6977F;
+    --misty_rose: #FEE8E2;
+    --gray: #545454;
+}
+
+/* BODY */
+
+body {
+    background-color: var(--misty_rose);
+}
+
+/* NAVBAR */
+.navbar {
+    background: rgb(3,43,43);
+    background: linear-gradient(180deg, var(--dark) 95%, var(--misty_rose) 100%);
+}
+
+.offcanvas {
+    background-color: var(--dark);
+}
+
+.logo_simple {
+    height: 4rem;
+}
+
+.logo_small {
+    width: 100%;
+}
+
+.end_hidden {
+    visibility: hidden;
+}
+
+.form-control {
+    background-color: var(--misty_rose);
+}
+
+.dropdown-menu {
+    background-color: var(--misty_rose);
+}
+
+.dropdown-item {
+    transition: 0.5s;
+    border-radius: 5px;
+    margin: 5px;
+}
+.dropdown-item:hover {
+    background-color: var(--light_salmon);
+}
+
+
