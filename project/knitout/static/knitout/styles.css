@@ -228,9 +228,10 @@ nav .form-control {
     background-color: var(--misty_rose);
     border: 0px;
     transition: 0.5s;
-    margin: 0.9rem;
+    margin: 0.5rem;
+    padding: 0.5rem;
     opacity: 90%;
-    border-radius: 10px;
+    border-radius: 5px;
 }
 
 .option_btn:hover {
@@ -239,6 +240,94 @@ nav .form-control {
     opacity: 100%;
     scale: 1.05;
 }
+
+/* ADD RECIPE, ADD_STEPS*/
+
+#add_recipe_div {
+    display: flex;
+    justify-content: center;
+}
+
+.add_forms{
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid lightgray;
+    background-color: white;
+    margin: 0.2rem;
+}
+
+#id_image {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.5rem 0.2rem;
+}
+
+  
+#add_image input[type="file"] {
+z-index: 0;
+position: absolute;
+max-width: 600px;
+}
+
+#add_image label {
+position: relative;
+z-index: 1;
+padding: 0.4rem;
+margin: 0.24rem;
+}
+
+#add_button {
+    width: 100%;
+    margin: 0.2rem;
+
+}
+
+#add_steps_page {
+    display: flex;
+    margin: auto 30%;
+}
+
+#add_steps_page form {
+    width: 100%;
+}
+
+.add_step {
+    width: 100%;
+}
+
+.add_step_counter {
+    font-weight: bold;
+}
+
+.add_step textarea {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid lightgray;
+    background-color: white;
+    resize: none;
+}
+
+#add_step_buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+#add_step_buttons .btn {
+    width: 30%;
+}
+
+
+
+
+
+
+
+
+
 
 
 

@@ -22,12 +22,12 @@ class Recipe_Form(forms.Form):
     CATEGORIES = Recipe.CATEGORIES
     DIFFICULTY = Recipe.DIFFICULTY
 
-    name = forms.CharField(label="Name", widget=forms.TextInput(attrs={'placeholder': 'Enter name of the recipe'}))
-    category = forms.ChoiceField(label="Category", widget=forms.Select, choices=CATEGORIES, initial='', required=True)
-    num_steps = forms.IntegerField(label="Number of Steps", min_value=2, widget=forms.NumberInput(attrs={'placeholder': 'Enter the number of steps'}))
-    jarn_amount = forms.FloatField(label="Jarn Amount", min_value=0.1, widget=forms.NumberInput(attrs={'placeholder': 'Enter the amount of jarn needed'}))
+    name = forms.CharField(label="Name", widget=forms.TextInput(attrs={'placeholder': 'Enter name of the recipe', 'class': 'add_forms'}))
+    category = forms.ChoiceField(label="Category", widget=forms.Select(attrs={'class': 'add_forms'}), choices=CATEGORIES, initial='', required=True)
+    num_steps = forms.IntegerField(label="Number of Steps", min_value=2, widget=forms.NumberInput(attrs={'placeholder': 'Enter the number of steps', 'class': 'add_forms'}))
+    jarn_amount = forms.FloatField(label="Jarn Amount", min_value=0.1, widget=forms.NumberInput(attrs={'placeholder': 'Enter the amount of jarn', 'class': 'add_forms'}))
     image = forms.ImageField(label="Image", required=True)
-    difficulty = forms.ChoiceField(label="Difficulty", widget=forms.Select, choices=DIFFICULTY, initial='', required=True)
+    difficulty = forms.ChoiceField(label="Difficulty", widget=forms.Select(attrs={'class': 'add_forms'}), choices=DIFFICULTY, initial='', required=True)
 
 class Steps_Form(forms.Form):
     description = forms.CharField(label = "", required=True, widget=forms.Textarea(attrs={'placeholder': 'Enter step description'}))

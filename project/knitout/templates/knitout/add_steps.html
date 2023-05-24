@@ -1,21 +1,21 @@
 {% extends "knitout/layout.html" %}
 
 {% block body %}
-<h1>Add steps</h1>
+<p class="title_text_big">Add steps</p>
 <div id="add_steps_page">
 <form method="POST">
     {% csrf_token %}
     {{ form_steps.management_form }}
         {% for form in form_steps %}
         <div class="add_step" id="add_step_{{ forloop.counter }}">
-            <div class="add_step_counter">{{ forloop.counter }}</div>
+            <div class="add_step_counter">Step {{ forloop.counter }}</div>
             <div class="add_step_text">{{ form.as_p }}</div>
         </div>
         {% endfor %}
     <div id="add_step_buttons">
-        <button id="add_step_prev" disabled>Previous</button>
-        <button id="add_step_next">Next</button>
-        <input id="add_steps_button" type="submit" value="Add Steps">
+        <button id="add_step_prev" disabled class="btn btn-secondary">Previous</button>
+        <button id="add_step_next" class="btn btn-secondary">Next</button>
+        <input id="add_steps_button" type="submit" value="Add Steps" class="btn btn-secondary">
     </div>
 </form>
 </div>

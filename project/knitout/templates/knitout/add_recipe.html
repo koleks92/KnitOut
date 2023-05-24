@@ -1,15 +1,19 @@
 {% extends "knitout/layout.html" %}
 
 {% block body %}
-<h1>Add New Recipe</h1>
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    <div id="add_name">{{ add_form.name }}</div>
-    <div id="add_category">{{ add_form.category }}</div>
-    <div id="add_steps">{{ add_form.num_steps }}</div>
-    <div id="add_jarn">{{ add_form.jarn_amount }}</div>
-    <div id="add_image">{{ add_form.image }}</div>
-    <div id="add_difficulty">{{ add_form.difficulty }}</div>
-    <div id="add_button_div"><input type="submit" id="add_button" value="Next"></div>
-</form>
+<p class="title_text_big">Add New Recipe</p>
+<div id="add_recipe_div">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div id="add_name">{{ add_form.name }}</div>
+        <div id="add_category">{{ add_form.category }}</div>
+        <div id="add_steps">{{ add_form.num_steps }}</div>
+        <div id="add_jarn">{{ add_form.jarn_amount }}</div>
+        <div id="add_image">{{ add_form.image }}
+            <label for="{{ add_form.image.id_for_label }}" class="btn btn-secondary">Choose File</label>
+        </div>
+        <div id="add_difficulty">{{ add_form.difficulty }}</div>
+        <div id="add_button_div"><input type="submit" id="add_button" class="btn btn-secondary" value="Next"></div>
+    </form>
+</div>
 {% endblock %}
