@@ -3,7 +3,7 @@
 {% block body %}
 <div id="index_div">
     {% if user.is_authenticated %}
-    <p class="title_text">Recently added recipes from followed users</p>
+    <p class="title_text">Followed Users Recipes</p>
     {% if recipes_follow %}
         <div class="recipes_all">
             {% for recipe in recipes_follow %}

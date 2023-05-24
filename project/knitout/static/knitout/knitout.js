@@ -113,7 +113,8 @@ else if (currentRoute.endsWith('steps'))
                 button.addEventListener('click', function(event)
                 {
                     // Get parent div
-                    const recipeDiv = event.target.parentNode.parentNode;
+                    const recipeDiv = event.target.parentNode.parentNode.parentNode;
+                    console.log(recipeDiv);
                     // Get step, step description, edit button
                     const step = button.value;
                     const step_text = recipeDiv.querySelector('.recipe_step_text');
@@ -130,7 +131,7 @@ else if (currentRoute.endsWith('steps'))
 
                     // Create button to save 
                     const save_button = document.createElement("button");
-                    save_button.classList.add("save_button");
+                    save_button.classList.add("save_button", "btn", "btn-secondary");
                     save_button.innerHTML = "Save";
                     save_button.addEventListener('click', function() {
                         const edit_description = recipeDiv.querySelector(".edit_textarea").value;

@@ -1,49 +1,62 @@
 {% extends "knitout/layout.html" %}
 
 {% block body %}
-<h1>{{ profile.name }}</h1>
-<div id="profile_div">
+<div id="profile_head">
+    <div id="profile_name">
+        <h1>{{ profile.name }}</h1>
+    </div>
     {% if user.is_authenticated and profile.owner == False %}
-    <div id="profile_follow"><button id="profile_follow_button">Follow</button></div>
+    <div id="profile_follow"><button class="btn btn-secondary" id="profile_follow_button">Follow</button></div>
     {% endif %}
-    <div id="profile_name">{{ profile.name }}</div>
-    <div id="profile_followers">{{ profile.followers }}</div>
-    <div id="profile_num_recipes">{{ profile.num_recipes }}</div>
-    <div id="profile_joined">{{ profile.joined }}</div>
-    <div id="profile_recipes">
+</div>
+<div id="profile_div">
+    
+    <div id="profile_followers"><b>Followers: </b>{{ profile.followers }}</div>
+    <div id="profile_num_recipes"><b>Recipes: </b>{{ profile.num_recipes }}</div>
+    <div id="profile_joined"><b>Joined: </b>{{ profile.joined }}</div>
+    <div class="recipes_all">
         {% if profile.recipes %}
         {% for recipe in profile.recipes %}
-        <div class="recipe_preview">
-            <div class="recipe_preview_id">{{ recipe.id }}</div>
-            <div class="recipe_preview_name"><a href="{% url 'recipe_view' recipe.id %}">{{ recipe.name }}</a></div>
-            <div class="recipe_preview_image"><img src="{{ recipe.image.url }}" alt="Recipe Image"></div>
-            <div class="recipe_preview_category">{{ recipe.get_category_display }}</div>
-            <div class="recipe_preview_difficulty">{{ recipe.get_difficulty_display }}</div>
-            <div class="recipe_preview_bar">
-                <div id="recipe_down"><i class="fa-regular fa-thumbs-down"></i></div>
-                <div id="recipe_bar"><div class="progress w-25" role="progressbar" aria-label="Good/Bad"
-                aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
-                <div class="progress-bar" style="width: 50%">
-                </div></div>
-                <div id="recipe_up"><i class="fa-regular fa-thumbs-up"></i></div>
+        <a class="recipe_preview_link" href="{% url 'recipe_view' recipe.id %}">
+            <div class="recipe_preview">
+                <div class="recipe_preview_id">{{ recipe.id }}</div>
+                <div class="recipe_preview_name">{{ recipe.name }}</div>
+                <div class="recipe_preview_category">{{ recipe.get_category_display }}</div>
+                <div class="recipe_preview_difficulty">{{ recipe.get_difficulty_display }}</div>
+                <div class="recipe_preview_image"><img class="recipe_preview_image_img" src="{{ recipe.image.url }}" alt="Recipe Image"></div>
+                <div class="recipe_preview_bar">
+                    <div class="recipe_down">
+                        <i class="fa-regular fa-thumbs-down"></i>
+                    </div>
+                        <div class="progress w-50" role="progressbar" aria-label="Good/Bad"
+                    aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar" style="width: 50%"></div>
+                        </div>
+                    <div class="recipe_up">
+                        <i class="fa-regular fa-thumbs-up"></i>
+                    </div>
+                </div>
             </div>
-        </div>
+        </a>
         {% endfor %}
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-            {% if profile.recipes.has_previous %}
-                <li class="page-item"><a class="page-link" href="?page={{ profile.recipes.previous_page_number }}">Previous</a></li>
-            {% else %}
-                <li class="page-item disabled"><a class="page-link">Previous</a></li>
-            {% endif %}
-                <li class="page-item disabled"><a class="page-link">Page {{ profile.recipes.number }} of {{ profile.recipes.paginator.num_pages }}</a></li>
-            {% if profile.recipes.has_next %}
-                <li class="page-item"><a class="page-link" href="?page={{ profile.recipes.next_page_number }}">Next</a></li>
-            {% else %}
-                <li class="page-item disabled"><a class="page-link">Next</a></li>
-            {% endif %}
-            </ul>
-        </nav>
+    </div>
+        <div class="pagination_div">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    {% if profile.recipes.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ profile.recipes.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Previous</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><a class="page-link">Previous</a></li>
+                    {% endif %}
+                    <li class="page-item disabled"><a class="page-link">Page {{ profile.recipes.number }} of {{ profile.recipes.paginator.num_pages }}</a></li>
+                    {% if profile.recipes.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ profile.recipes.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Next</a></li>
+                    {% else %}
+                        <li class="page-item disabled"><a class="page-link">Next</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div> 
         {% else %}
             {{ profile.name}} didn't add any recipes yet !
         {% endif %}

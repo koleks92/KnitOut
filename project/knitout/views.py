@@ -35,13 +35,14 @@ class Steps_Form(forms.Form):
 ''' VIEWS '''
 
 def index(request):
+    try:    
+        # Get the followed users
+        followed_users = Follow.objects.filter(user=request.user).values_list('followed_users', flat=True)
 
-    # Get the followed users
-    followed_users = Follow.objects.filter(user=request.user).values_list('followed_users', flat=True)
-
-    # Get the 2 latest recipes added by the followed users
-    recipes_followed = Recipe.objects.filter(user__in=followed_users).order_by('-date')[:2]
-
+        # Get the 2 latest recipes added by the followed users
+        recipes_followed = Recipe.objects.filter(user__in=followed_users).order_by('-date')[:2]
+    except:
+        recipes_followed = False
          
     # Get 10 recent recipes
     recipes_all = Recipe.objects.order_by('-date')[:10]
@@ -105,6 +106,7 @@ def register(request):
     
 @login_required
 def add_recipe(request):
+    try:
         if request.method == "POST":
             # Get recipie and check if valid
             recipe = Recipe_Form(request.POST, request.FILES)
@@ -135,6 +137,7 @@ def add_recipe(request):
             return render(request, "knitout/add_recipe.html",{
                 "add_form": Recipe_Form()
             })
+    except:
         return render(request, "knitout/error.html",{
             "message": "Something went wrong! Please try again."
         })
@@ -302,6 +305,7 @@ def following_view(request):
     
 
 def by_difficulty(request): 
+    try:
         if request.method == "GET":
             # Get difficulty
             difficulty = request.GET.get("q")
@@ -332,6 +336,7 @@ def by_difficulty(request):
                 "query" : query,
                 "recipes": page_obj
             })
+    except:
         return render(request, "knitout/error.html",{
             "message": "Something went wrong! Please try again."
         })
@@ -489,124 +494,146 @@ def dislikes(request, id):
 
 @csrf_exempt     
 def favorites(request, id):
-    recipe = get_object_or_404(Recipe, id = id)
+    try:
+        recipe = get_object_or_404(Recipe, id = id)
 
-    if request.method == "GET":
-        # Check if logged and favorited
-        logged = False
-        favorited = False
-        if request.user.is_authenticated:
-            logged = True
-            if recipe.favorites.filter(username = request.user).exists():
-                favorited = True
+        if request.method == "GET":
+            # Check if logged and favorited
+            logged = False
+            favorited = False
+            if request.user.is_authenticated:
+                logged = True
+                if recipe.favorites.filter(username = request.user).exists():
+                    favorited = True
 
-        # Create a response_data and send via JsonResponse
-        response_data = {
-            "logged": logged,
-            "favorited": favorited
-        }
+            # Create a response_data and send via JsonResponse
+            response_data = {
+                "logged": logged,
+                "favorited": favorited
+            }
 
-        return JsonResponse(response_data)
+            return JsonResponse(response_data)
 
 
-    if request.method == "PUT":
-        # Check if logged in and if already in favroites
-        if request.user.is_authenticated:
-            # If in favorites then remove
-            if recipe.favorites.filter(username = request.user):
-                recipe.favorites.remove(request.user)
-                return JsonResponse({"message": "Unfavorited"})
-            # If not in favorites than add
-            else:
-                recipe.favorites.add(request.user)
-                return JsonResponse({"message": "Favorited"})
-            
+        if request.method == "PUT":
+            # Check if logged in and if already in favroites
+            if request.user.is_authenticated:
+                # If in favorites then remove
+                if recipe.favorites.filter(username = request.user):
+                    recipe.favorites.remove(request.user)
+                    return JsonResponse({"message": "Unfavorited"})
+                # If not in favorites than add
+                else:
+                    recipe.favorites.add(request.user)
+                    return JsonResponse({"message": "Favorited"})
+    except:
+        return render(request, "knitout/error.html", {
+            "message": "Something went wrong! Please try again."
+        })
+                
 @csrf_exempt
 def follow(request, username):
-    # Check if logged in
-    if request.user.is_authenticated == False:
-        message = "Guest"
-        return JsonResponse({"message": message})
+    try:
+        # Check if logged in
+        if request.user.is_authenticated == False:
+            message = "Guest"
+            return JsonResponse({"message": message})
+        
+        # User to follow
+        user = get_object_or_404(User, username = username)  
+
+        if request.method == "GET":
+            # Check if Followed/Unfollowed
+            if Follow.objects.filter(user=request.user, followed_users=user).exists():
+                message = "Followed"
+            else:
+                message = "Unfollowed"
+
+            return JsonResponse({"message": message})
+
+        
+        if request.method == "PUT":
+            # If followed then unfollow
+            if Follow.objects.filter(user=request.user, followed_users=user).exists():
+                follow = Follow.objects.get(user=request.user)
+                follow.followed_users.remove(user)
+                message = "Unfollowed"
+            # If unfollowed then follow
+            else:
+                follow, created = Follow.objects.get_or_create(user=request.user)
+                follow.followed_users.add(user)
+                message = "Followed"
+
+            return JsonResponse({"message": message})
+    except:
+        return render(request, "knitout/error.html", {
+            "message": "Something went wrong! Please try again."
+        })
     
-    # User to follow
-    user = get_object_or_404(User, username = username)  
-
-    if request.method == "GET":
-        # Check if Followed/Unfollowed
-        if Follow.objects.filter(user=request.user, followed_users=user).exists():
-            message = "Followed"
-        else:
-            message = "Unfollowed"
-
-        return JsonResponse({"message": message})
-
-    
-    if request.method == "PUT":
-        # If followed then unfollow
-        if Follow.objects.filter(user=request.user, followed_users=user).exists():
-            follow = Follow.objects.get(user=request.user)
-            follow.followed_users.remove(user)
-            message = "Unfollowed"
-        # If unfollowed then follow
-        else:
-            follow, created = Follow.objects.get_or_create(user=request.user)
-            follow.followed_users.add(user)
-            message = "Followed"
-
-        return JsonResponse({"message": message})
-
 @csrf_exempt
 @login_required
 def bookmark(request, id, step):
-    recipe = get_object_or_404(Recipe, id = id)
+    try:
+        recipe = get_object_or_404(Recipe, id = id)
 
-    if request.method == "GET":
-        if Step.objects.filter(recipe = recipe, bookmark_user = request.user).exists():
-            step_obj = Step.objects.get(recipe = recipe, bookmark_user = request.user)
-            # Send step if exists
-            return JsonResponse({"message": step_obj.step})
-        else:
-            return JsonResponse({"message": "no_bookmark"})
-        
-    if request.method == "PUT":
-        # If just Remove Bookmark
-        if Step.objects.filter(recipe = recipe, bookmark_user = request.user, step = step).exists():
-            step_obj = Step.objects.get(recipe = recipe, bookmark_user = request.user, step = step)
-            step_obj.bookmark_user.remove(request.user)
-            return JsonResponse({"message": "Removed"})
-        else:
-        # Else if add bookmark
-            # If one already exists, then remove, and and new one
+        if request.method == "GET":
             if Step.objects.filter(recipe = recipe, bookmark_user = request.user).exists():
-                step_obj_remove = Step.objects.get(recipe = recipe, bookmark_user = request.user)
-                step_obj_remove.bookmark_user.remove(request.user)
-                step_obj = Step.objects.get(recipe = recipe, step = step)
-                step_obj.bookmark_user.add(request.user)
-                return JsonResponse({"message": "RemovedAdded"})
-            # If doesnt exist, just add new one
+                step_obj = Step.objects.get(recipe = recipe, bookmark_user = request.user)
+                # Send step if exists
+                return JsonResponse({"message": step_obj.step})
             else:
-                step_obj = Step.objects.get(recipe = recipe, step = step)
-                step_obj.bookmark_user.add(request.user)
-                return JsonResponse({"message": "Added"})
+                return JsonResponse({"message": "no_bookmark"})
             
+        if request.method == "PUT":
+            # If just Remove Bookmark
+            if Step.objects.filter(recipe = recipe, bookmark_user = request.user, step = step).exists():
+                step_obj = Step.objects.get(recipe = recipe, bookmark_user = request.user, step = step)
+                step_obj.bookmark_user.remove(request.user)
+                return JsonResponse({"message": "Removed"})
+            else:
+            # Else if add bookmark
+                # If one already exists, then remove, and and new one
+                if Step.objects.filter(recipe = recipe, bookmark_user = request.user).exists():
+                    step_obj_remove = Step.objects.get(recipe = recipe, bookmark_user = request.user)
+                    step_obj_remove.bookmark_user.remove(request.user)
+                    step_obj = Step.objects.get(recipe = recipe, step = step)
+                    step_obj.bookmark_user.add(request.user)
+                    return JsonResponse({"message": "RemovedAdded"})
+                # If doesnt exist, just add new one
+                else:
+                    step_obj = Step.objects.get(recipe = recipe, step = step)
+                    step_obj.bookmark_user.add(request.user)
+                    return JsonResponse({"message": "Added"})
+    
+    except:
+        return render(request, "knitout/error.html", {
+            "message": "Something went wrong! Please try again."
+        })    
+    
 @csrf_exempt
 @login_required
 def edit(request, id, step):
-    recipe = get_object_or_404(Recipe, id = id)
-    step = get_object_or_404(Step, recipe = recipe, step = step)
+    try:
+        recipe = get_object_or_404(Recipe, id = id)
+        step = get_object_or_404(Step, recipe = recipe, step = step)
 
-    print(step)
+        print(step)
 
-    if request.method == "POST" and recipe.user == request.user:
-        # Get data, and edited description
-        data = json.loads(request.body)
-        edited_description = data.get("body", "")
+        if request.method == "POST" and recipe.user == request.user:
+            # Get data, and edited description
+            data = json.loads(request.body)
+            edited_description = data.get("body", "")
 
-        # Replace and save
-        step.description = edited_description
-        step.save()
+            # Replace and save
+            step.description = edited_description
+            step.save()
 
-        return JsonResponse({"message": "Edit sucessful"})
+            return JsonResponse({"message": "Edit sucessful"})
+
+    except:
+        return render(request, "knitout/error.html", {
+            "message": "Something went wrong! Please try again."
+        })
 
         
 

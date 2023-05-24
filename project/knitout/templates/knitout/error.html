@@ -1,6 +1,11 @@
 {% extends "knitout/layout.html" %}
 
 {% block body %}
-<h1>Error</h1>
-{{ message }}
+<div id="error_div">
+    <p class="title_text_big">Error</p>
+    <p class="replace_text">{{ message }}</p>
+    {% load static %}
+
+    <img alt="KnitOut" class="logo_big" src="{% static 'knitout/images/logo_big.png' %}">
+</div>
 {% endblock %}

@@ -47,6 +47,18 @@ body {
     font-size: 1.2rem;
 }
 
+#error_div 
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.logo_big {
+    width: 75%;
+    opacity: 50%;
+}
+
 
 /* LOGIN/REGISTER */
 #login_reg {
@@ -88,6 +100,28 @@ input:-webkit-autofill:active{
 
 #login_reg a:hover {
     font-size: 1.05rem;
+}
+
+/* FOOTER */
+footer {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1rem;
+    color: var(--misty_rose);
+    font-size: 1.0rem;
+    font-family: Arial, Helvetica, sans-serif;
+    background: rgb(3,43,43);
+    background: linear-gradient(0deg, var(--dark) 90%, var(--misty_rose) 100%);
+}
+
+footer a {
+    text-decoration: none;
+    color: var(--light_salmon);
 }
 
 /* NAVBAR */
@@ -420,7 +454,6 @@ margin: 0.24rem;
 /* RECIPE_STEPS */
 
 
-
 .recipe_step {
     display: flex;
     border: 1px solid lightgray;
@@ -439,7 +472,7 @@ margin: 0.24rem;
     justify-content: space-between;
 }
 
-.bookmark_button, .edit_button {
+.bookmark_button, .edit_button, .save_button {
     margin: 0.5rem 0rem;
 }
 
@@ -467,11 +500,51 @@ margin: 0.24rem;
     color: var(--misty_rose);
 }
 
+.edit_textarea {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid lightgray;
+    background-color: white;
+    resize: none;
+}
+
+/* PROFILE */
+
+#profile_head {
+    display: flex;
+}
+
+#profile_follow {
+    margin: 0.5rem;
+}
+
+/* RESPONSIVE */
+@media screen and (max-width: 960px) {
+    #recipe_favorite, #empty_div {
+        width: auto;
+        padding-top: 0rem;
+        margin: auto;
+    }
+
+    #recipe_div {
+        flex-direction: column;
+    
+    }   
+
+    #add_image input[type="file"] {
+        max-width: 300px;
+        }
 
 
+    #add_steps_page {
+        display: flex;
+        margin: auto;
+    }
 
 
-
+}
 
 
 

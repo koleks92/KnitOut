@@ -48,6 +48,8 @@
         </div>
         {% else %}
             <p class="replace_text">Can't find any recipes matching your query :(</p>
+            {% load static %}
+            <img alt="KnitOut" class="logo_big" src="{% static 'knitout/images/logo_big.png' %}">
         {% endif %}
 </div>
 {% endblock %}
