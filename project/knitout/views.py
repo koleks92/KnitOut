@@ -36,18 +36,19 @@ class Steps_Form(forms.Form):
 
 def index(request):
 
-    recipes_follow = False
+    # Get the followed users
+    followed_users = Follow.objects.filter(user=request.user).values_list('followed_users', flat=True)
 
-    # Get 2 recent favorites
-    if request.user.is_authenticated:
-        recipes_follow = Recipe.objects.filter(favorites = request.user).order_by('-date')[:2]
+    # Get the 2 latest recipes added by the followed users
+    recipes_followed = Recipe.objects.filter(user__in=followed_users).order_by('-date')[:2]
+
          
     # Get 10 recent recipes
     recipes_all = Recipe.objects.order_by('-date')[:10]
 
 
     return render(request, "knitout/index.html", {
-        "recipes_follow": recipes_follow,
+        "recipes_follow": recipes_followed,
         "recipes_all": recipes_all
     })
 
@@ -276,10 +277,8 @@ def favorites_view(request):
 @login_required
 def following_view(request):
     try:
-        followed_users = get_object_or_404(Follow, user = request.user).followed_users.all()
-        if len(followed_users) == 0:
-            users_recipes = False
-        else:
+        try:
+            followed_users = get_object_or_404(Follow, user = request.user).followed_users.all()
             users_recipes = []
             for user in followed_users:
                 user_recipes = Recipe.objects.filter(user=user).order_by('-date')[:4]
@@ -288,7 +287,10 @@ def following_view(request):
             paginator = Paginator(users_recipes, 4)
             page_number = request.GET.get("page")
             page_obj = paginator.get_page(page_number)
-        
+            
+        except:
+            page_obj = False
+    
             
         return render(request, "knitout/following.html", {
             "users_recipes": page_obj

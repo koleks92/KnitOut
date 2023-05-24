@@ -47,6 +47,7 @@ body {
     font-size: 1.2rem;
 }
 
+
 /* LOGIN/REGISTER */
 #login_reg {
     display: flex;
@@ -372,14 +373,14 @@ margin: 0.24rem;
 #recipe_image {
     display: flex;
     align-items: center;
-    max-width: 100%;
     max-height: auto;
     background-color: var(--misty_rose);  
 }
 
 #recipe_image_img {
     border-radius: 4px;
-    max-width: 75%vw;
+    width: 100%;
+    height: auto;
 }
 
 #recipe_extra {
@@ -465,6 +466,7 @@ margin: 0.24rem;
     scale: 1.05;
     color: var(--misty_rose);
 }
+
 
 
 
