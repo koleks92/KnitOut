@@ -202,7 +202,7 @@ nav .form-control {
     border: 1px solid lightgray;
     border-radius: 5px;
     padding: 1rem;
-    max-width: 400px;
+    width: 400px;
     max-height: 600px;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;   
     margin: 1rem;
@@ -428,8 +428,8 @@ margin: 0.24rem;
 
 #recipe_image_img {
     border-radius: 4px;
-    width: 100%;
-    height: auto;
+    width: auto;
+    max-height: 300px;
 }
 
 #recipe_extra {

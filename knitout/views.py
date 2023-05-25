@@ -100,7 +100,7 @@ def register(request):
             return render(request, "knitout/register.html", {
                 "message": "Username already taken."
             })
-        login(request, user)
+        login_view(request, user)
     else:
         return render(request, "knitout/register.html")
     

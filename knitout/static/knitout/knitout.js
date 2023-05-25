@@ -220,9 +220,6 @@ else if (currentRoute.endsWith('steps'))
                     })
                 })
             })
-        
-
-
             // Add click event listeners to buttons
             prevButton.addEventListener("click", () => {
                 // Hide current step
@@ -256,6 +253,56 @@ else if (currentRoute.endsWith('steps'))
                 }
                 
             });       
+        }
+        else
+        {
+        // Hide all views and show currentStep
+        for (let i=0; i < formSteps.length; i++)
+        {
+            formSteps[i].style.display = "none";
+        }
+        formSteps[currentStep].style.display = "block";
+        // Disable previous button if on first step
+        if (currentStep === 0) {
+            prevButton.disabled = true;
+        }
+        // Enable next button if previously disabled
+        if (currentStep === formSteps.length - 1) {
+            nextButton.disabled = true;
+        }
+        // Add click event listeners to buttons
+        prevButton.addEventListener("click", () => {
+            // Hide current step
+            formSteps[currentStep].style.display = "none";
+            // Decrement step and show previous step
+            currentStep--;
+            formSteps[currentStep].style.display = "block";
+            // Disable previous button if on first step
+            if (currentStep === 0) {
+                prevButton.disabled = true;
+            }
+            // Enable next button if previously disabled
+            if (nextButton.disabled) {
+                nextButton.disabled = false;
+            }
+        });
+
+        nextButton.addEventListener("click", () => {
+            // Hide current step
+            formSteps[currentStep].style.display = "none";
+            // Increment step and show next step
+            currentStep++;
+            formSteps[currentStep].style.display = "block";
+            // Disable next button if on last step
+            if (currentStep === formSteps.length - 1) {
+                nextButton.disabled = true;
+            }
+            // Enable previous button if previously disabled
+            if (prevButton.disabled) {
+                prevButton.disabled = false;
+            }
+            
+        }); 
         }
     });
 }
@@ -390,6 +437,7 @@ else if (currentRoute.startsWith("/profile/"))
         {
             // Get button and change name if Followed/Unfollowed
             let button = document.querySelector("#profile_follow_button");
+            console.log(button);
 
             if (data.message =="Followed")
             {
