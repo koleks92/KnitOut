@@ -123,10 +123,12 @@ This page allows users to view a selected user's profile. Users can see the name
 These pages allow users to log in, log out, or register a new account.
 
 ## Distinctiveness and Complexity
+I believe that this project showcases the culmination of all the skills I have acquired from previous projects, allowing me to create something truly exceptional. One of my main objectives was to reduce reliance on Bootstrap libraries in order to focus on developing my own unique CSS/HTML style. As part of this effort, I went the extra mile to create custom APIs for various functionalities, including rating recipes, adding or removing ratings, managing bookmarks, and handling user following.
 
-I believe that this project incorporates all the skills I have learned from previous projects, enabling me to create something truly special. I made an effort to limit the usage of Bootstrap libraries so that I could focus on developing my own CSS/HTML style. Additionally, I created my own APIs for functionalities such as rating, adding/removing ratings, adding/removing bookmarks, and managing bookmarks and user following.
+To enhance user experience, I implemented a custom JavaScript function that enables dynamic changes to the rating bar without the need for page reloading. Furthermore, my goal was to design a webpage/web application that specifically caters to the knitting community, considering their specific needs and preferences.
 
-I developed a custom JavaScript function that allows for dynamic changes to the rating bar without having to reload the entire page. Lastly, but certainly not least, I aimed to create a webpage/web application that caters to the needs of the knitting community. 
+In terms of visual aesthetics, I aimed for an easy-to-view interface with intuitive navigation and pleasing color schemes. Leveraging CSS, I crafted my own distinctive website style, incorporating unique hover effects, personalized button designs, and customized logos.
+
 
 ## Contributing
 
