@@ -12,6 +12,7 @@ body {
     background-color: var(--misty_rose);
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     margin-top: 4rem;
+    margin-bottom: 2rem;
     padding: 1rem;
     color: var(--dark);
 }
@@ -55,8 +56,11 @@ body {
 }
 
 .logo_big {
+    display: block;
     width: 75%;
     opacity: 50%;
+    margin: auto;
+    
 }
 
 
@@ -166,14 +170,24 @@ nav .form-control {
 /* PAGINATION */
 .pagination_div {
     position: relative;
+    margin-top: 1rem;
     bottom: 0px;
     list-style: none;
     display: flex;
     justify-content: center;
     color: white;
     bottom: 0px;
-    
 }
+
+.page-item a{
+    text-decoration: none;
+    color: var(--dark);
+}
+
+.dimmed {
+    opacity: 50%;
+}
+
 
 /* RECIPE PREVIEW */
 
@@ -514,12 +528,26 @@ margin: 0.24rem;
 
 #profile_head {
     display: flex;
+    justify-content: space-between;
+}
+
+#profile_name {
+    display: flex   ;
 }
 
 #profile_follow {
     margin: 0.5rem;
 }
 
+#profile_extra {
+    display: flex;
+    font-size: 1.2rem;
+    width: fit-content;
+}
+
+#profile_extra * {
+    padding: 0.5rem;
+}
 /* RESPONSIVE */
 @media screen and (max-width: 960px) {
     #recipe_favorite, #empty_div {
@@ -542,17 +570,4 @@ margin: 0.24rem;
         display: flex;
         margin: auto;
     }
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
